@@ -1,0 +1,128 @@
+$MAIN-COLOR-0 : #121212;
+$MAIN-COLOR-1 : #000000;
+$ACCENT-COLOR-0 : #bb86fc;
+$FONT : #ffffff;
+
+@mixin WINDOW {
+    border: 2px solid $ACCENT-COLOR-0;
+    border-top: 2.5rem solid $ACCENT-COLOR-0;
+    background-color: $MAIN-COLOR-1;
+    min-height: 10rem;
+    position: relative;
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 1rem;
+
+    &::before {
+        content: attr(data-window);
+        position: absolute;
+        top: -2.5rem;
+        left: 1rem;
+        line-height: 2.5rem;
+        font-size: 1rem;
+        color: $MAIN-COLOR-1;
+    }
+
+    [data-form] {
+        flex: 1 1 15rem;
+
+        div {
+            display: flex;
+            flex-direction: column;
+            gap: .75rem;
+            align-items: center;
+    
+            span {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                width: 8rem;
+    
+                & > * {
+                    width: 100%;
+                    overflow: hidden;
+                    border-radius: .25rem 0 0 .25rem;
+                }
+
+                & > *:nth-child(even) {
+                    border-radius: 0 .25rem .25rem 0;
+                }
+            }
+        }
+    }
+}
+
+select, 
+input {
+    background-color: $MAIN-COLOR-0;
+    padding: .5rem;
+    border: none;;
+    width: 8rem;
+    text-align: center;
+}
+
+img {
+    background-color: $MAIN-COLOR-0;
+    height: 10rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    color : $FONT;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    border-radius: .25rem;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: $MAIN-COLOR-1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+nav {
+    background-color: $MAIN-COLOR-0;
+    padding: 1rem 1.5rem;
+    position: static;
+    width: 100%;
+    border-bottom: .35rem solid $MAIN-COLOR-1;
+
+    ul {
+        display: flex;
+        flex-direction: row;
+        list-style: none;
+        justify-content: space-evenly;
+        align-items: center;
+        gap: 1rem;
+
+        a {
+            text-decoration: none;
+            transition: color 150ms ease-in;
+            font-weight: 900;
+
+            &:active {
+                color : $MAIN-COLOR-1;
+            }
+        }
+    }
+}
+
+main {
+    padding: 1rem 1.5rem;
+    width: Min(55rem, 100%);
+    background-color: $MAIN-COLOR-0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+section {
+    @include WINDOW();
+}

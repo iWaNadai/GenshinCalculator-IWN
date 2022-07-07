@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./UserInterface/global.css">
+    <script type="module" src="./dest/App.js"></script>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="#CharacterWeapon">CHAR & WEAP</a></li>
+            <li><a href="#Artifacts">ARTI</a></li>
+        </ul>
+    </nav>
+    <main>
+        <section id="CharacterWeapon" class="character-weapon" data-window="CHARACTER & WEAPON">
+            <iwn-character-form data-form ></iwn-character-form>
+            <iwn-weapon-form    data-form ></iwn-character-form>
+        </section>
+        <section id="Artifacts" class="artifacts" data-window="ARTIFACTS">
+            <iwn-artifact-form data-form type="Flower" main-stat='["HP",717]' ></iwn-artifact-form>
+            <iwn-artifact-form data-form type="Feather" main-stat='["ATK",47]'></iwn-artifact-form>
+            <iwn-artifact-form data-form type="Sands" main-stat='["HP%",7]'   ></iwn-artifact-form>
+            <iwn-artifact-form data-form type="Goblet" main-stat='["HP%",7]'  ></iwn-artifact-form>
+            <iwn-artifact-form data-form type="Circlet" main-stat='["HP%",7]' ></iwn-artifact-form>
+        </section>
+    </main>
+</body>
+</html>

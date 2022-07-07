@@ -1,0 +1,164 @@
+select,
+input {
+  background-color: #121212;
+  padding: .5rem;
+  border: none;
+  width: 8rem;
+  text-align: center;
+}
+
+img {
+  background-color: #121212;
+  height: 10rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  color: #ffffff;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  border-radius: .25rem;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+body {
+  background-color: #000000;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+nav {
+  background-color: #121212;
+  padding: 1rem 1.5rem;
+  position: static;
+  width: 100%;
+  border-bottom: 0.35rem solid #000000;
+}
+
+nav ul {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  list-style: none;
+  -webkit-box-pack: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 1rem;
+}
+
+nav ul a {
+  text-decoration: none;
+  -webkit-transition: color 150ms ease-in;
+  transition: color 150ms ease-in;
+  font-weight: 900;
+}
+
+nav ul a:active {
+  color: #000000;
+}
+
+main {
+  padding: 1rem 1.5rem;
+  width: Min(55rem, 100%);
+  background-color: #121212;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  gap: 1rem;
+}
+
+section {
+  border: 2px solid #bb86fc;
+  border-top: 2.5rem solid #bb86fc;
+  background-color: #000000;
+  min-height: 10rem;
+  position: relative;
+  padding: 1rem 1.5rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
+  gap: 1rem;
+}
+
+section::before {
+  content: attr(data-window);
+  position: absolute;
+  top: -2.5rem;
+  left: 1rem;
+  line-height: 2.5rem;
+  font-size: 1rem;
+  color: #000000;
+}
+
+section [data-form] {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 15rem;
+          flex: 1 1 15rem;
+}
+
+section [data-form] div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  gap: .75rem;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+section [data-form] div span {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
+  width: 8rem;
+}
+
+section [data-form] div span > * {
+  width: 100%;
+  overflow: hidden;
+  border-radius: .25rem 0 0 .25rem;
+}
+
+section [data-form] div span > *:nth-child(even) {
+  border-radius: 0 .25rem .25rem 0;
+}
+/*# sourceMappingURL=global.css.map */
