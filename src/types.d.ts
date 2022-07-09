@@ -74,7 +74,8 @@ export interface Character {
             PhysicalDamage? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             PhysicalResistance? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
         }
-    }
+    },
+    Rank? : number
 }
 
 export interface Weapon {
@@ -120,6 +121,7 @@ export interface Weapon {
             PhysicalResistance? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
         }
     }
+    Rank? : number
 }
 
 export interface Artifact {
@@ -127,10 +129,7 @@ export interface Artifact {
     Set : string;
     Type : ArtifactType;
     MainStat : [string, number]
-    SubStat : [[string, number],
-               [string, number],
-               [string, number],
-               [string, number]]
+    SubStat : [string, number][]
 }
 
 export interface ArtifactSet {
