@@ -8,8 +8,10 @@ window.customElements.define(`iwn-weapon-form`, WeaponFormComponent)
 window.customElements.define(`iwn-artifact-form`, ArtifactComponent)
 window.customElements.define(`iwn-statboard`, StatsComponent)
 
+window.dispatchEvent(new CustomEvent('gic:Update', {detail : {}}))
+
 window.addEventListener('gic:Update', e => {
-    console.log((e as CustomEvent).detail)
+    console.log((e as CustomEvent)?.detail)
 });
 
 console.table([(document.querySelector('iwn-character-form') as CharacterFormComponent).Character,
