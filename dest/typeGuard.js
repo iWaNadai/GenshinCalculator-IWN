@@ -1,6 +1,8 @@
-import * as Data from './Variables/DataFile.js';
+import CHARACTERS from './Variables/Characters.js';
+import WEAPONS from './Variables/Weapons.js';
+import ARTIFACT_SETS from './Variables/Artifacts.js';
 export function isCharacter(obj) {
-    let object = Data.CHARACTERS[0];
+    let object = CHARACTERS[0];
     for (let key in object) {
         if (!(key in object))
             return false;
@@ -8,7 +10,7 @@ export function isCharacter(obj) {
     return true;
 }
 export function isWeapon(obj) {
-    let object = Data.WEAPONS[0];
+    let object = WEAPONS[0];
     for (let key in object) {
         if (!(key in object))
             return false;
@@ -16,7 +18,7 @@ export function isWeapon(obj) {
     return true;
 }
 export function isArtifactSet(obj) {
-    let object = Data.ARTIFACT_SETS[0];
+    let object = ARTIFACT_SETS[0];
     for (let key in object) {
         if (!(key in object))
             return false;

@@ -20,10 +20,14 @@ export interface Character {
             ATK : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             DEF : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             ElementalMastery? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
+            MoveSpeed? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
+            AttackSpeed? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             CriticalRate? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             CriticalDamage? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             EnergyRecharge? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
+            CooldownReduction? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             HealingBonus? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
+            IncomingHealingBonus? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             ShieldStrength? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             AnemoDamage? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             AnemoResistance? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
@@ -41,7 +45,7 @@ export interface Character {
             CryoResistance? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             PhysicalDamage? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             PhysicalResistance? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
-            
+            TotalDamage? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
         }
         Bonus : {
             [key: string] : any
@@ -52,10 +56,14 @@ export interface Character {
             'ATK%'? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             'DEF%'? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             ElementalMastery? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
+            MoveSpeed? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
+            AttackSpeed? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             CriticalRate? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             CriticalDamage? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             EnergyRecharge? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
+            CooldownReduction? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             HealingBonus? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
+            IncomingHealingBonus? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             ShieldStrength? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             AnemoDamage? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             AnemoResistance? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
@@ -73,9 +81,13 @@ export interface Character {
             CryoResistance? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             PhysicalDamage? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             PhysicalResistance? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
+            TotalDamage? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
         }
     },
     Rank? : number
+    Level? : number
+    Passives : [string,string]
+    Constellations?: (Effect|null)[]
 }
 
 export interface Weapon {
@@ -98,10 +110,14 @@ export interface Weapon {
             'ATK%'? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             'DEF%'? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             ElementalMastery? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
+            MoveSpeed? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
+            AttackSpeed? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             CriticalRate? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             CriticalDamage? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             EnergyRecharge? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
+            CooldownReduction? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             HealingBonus? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
+            IncomingHealingBonus? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             ShieldStrength? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             AnemoDamage? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             AnemoResistance? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
@@ -119,6 +135,7 @@ export interface Weapon {
             CryoResistance? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             PhysicalDamage? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
             PhysicalResistance? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
+            TotalDamage? : number | [number, number, number, number, number, number, number, number, number, number, number, number, number, number]
         }
     }
     Rank? : number
@@ -128,8 +145,37 @@ export interface Artifact {
     [key: string] : any
     Set : string;
     Type : ArtifactType;
-    MainStat : [string, number]
-    SubStat : [string, number][]
+    Stats : {
+        [key: string] : any
+        HP? : number
+        ATK? : number
+        DEF? : number
+        'HP%'? : number
+        'ATK%'? : number
+        'DEF%'? : number
+        ElementalMastery? : number
+        CriticalRate? : number
+        CriticalDamage? : number
+        EnergyRecharge? : number
+        HealingBonus? : number
+        ShieldStrength? : number
+        AnemoDamage? : number
+        AnemoResistance? : number
+        GeoDamage? : number
+        GeoResistance? : number
+        ElectroDamage? : number
+        ElectroResistance? : number
+        DendroDamage? : number
+        DendroResistance? : number
+        HydroDamage? : number
+        HydroResistance? : number
+        PyroDamage? : number
+        PyroResistance? : number
+        CryoDamage? : number
+        CryoResistance? : number
+        PhysicalDamage? : number
+        PhysicalResistance? : number
+    }
 }
 
 export interface ArtifactSet {
@@ -183,4 +229,13 @@ export interface ArtifactSet {
     }
 }
 
-export type InputType = 'Auto' | 'Select' | 'Switch'
+export interface Effect {
+    [key: string] : any
+    name : string;
+    id : string
+    formRender() : string,
+    connect() : any
+    disconnect() : any
+    output?(...args?) : {[key : string]: any}
+
+}

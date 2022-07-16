@@ -3,12 +3,11 @@ import ArtifactFormComponent from "./ArtifactComponent"
 import CharacterFormComponent from "./CharacterComponent.js"
 import WeaponFormComponent from "./WeaponComponent.js"
 
-const TYPES = ['HP','ATK','DEF','ElementalMastery','EnergyRecharge','CriticalRate','CriticalDamage','HealingBonus','ShieldStrength','AnemoDamage','AnemoResistance','GeoDamage','GeoResistance','ElectroDamage','ElectroResistance',,'DendroDamage','DendroResistance','HydroDamage','HydroResistance','PyroDamage','PyroResistance','CryoDamage','CryoResistance','PhysicalDamage','PhysicalResistance']
+const TYPES : string[] = ['HP','ATK','DEF','ElementalMastery','EnergyRecharge','CriticalRate','CriticalDamage','HealingBonus','ShieldStrength','AnemoDamage','AnemoResistance','GeoDamage','GeoResistance','ElectroDamage','ElectroResistance','DendroDamage','DendroResistance','HydroDamage','HydroResistance','PyroDamage','PyroResistance','CryoDamage','CryoResistance','PhysicalDamage','PhysicalResistance'] as string[]
 
 export default class StatBoardComponent extends HTMLElement {
-    private base : number[] = []
-    private final : number[] = []
-
+    public base : number[] = []
+    public final : number[] = []
     
     constructor() {
         super()
@@ -37,10 +36,12 @@ export default class StatBoardComponent extends HTMLElement {
         window.addEventListener('gic:Update', e => {
             let Character = (document.querySelector('iwn-character-form') as CharacterFormComponent).Character as Character;
             let Weapon = (document.querySelector('iwn-weapon-form') as WeaponFormComponent).Weapon as Weapon;
-            let Artifacts : Artifact[] = Array.from(document.querySelectorAll('iwn-artifact-form')).map(a => (a as ArtifactFormComponent).Artifact)
 
             Bases([Character, Weapon]);
-            Finals(this.base, [Character, Weapon, ...Artifacts]);
+            this.base = [...(document.querySelectorAll('[data-header="BASE"] li'))].map(a => parseFloat((a as HTMLElement).innerHTML))
+            Finals(this.base);
+            this.final = [...(document.querySelectorAll('[data-header="FINAL"] li'))].map(a => parseFloat((a as HTMLElement).innerHTML))
+
         })
     }
 }
@@ -69,13 +70,13 @@ function Bases(value? : [Character, Weapon]) : string | void {
                         case 'DEF':
                         case 'ElementalMastery':
                             value = character.Stats.Base[a]
-                            return `<li>${value ?? 0}</li>`;
+                            return `<li>${((value ?? 0) as number).toFixed(2)}</li>`;
                         case 'ATK':
                             value = Number(character.Stats.Base.ATK) + Number(weapon.Stats.Base.ATK)
-                            return `<li>${value}</li>`;
+                            return `<li>${(value).toFixed(2)}</li>`;
                         default:
                             value = character.Stats.Base[a as string]
-                            return `<li>${value ?? 0}%</li>`
+                            return `<li>${((value ?? 0) as number).toFixed(2)}%</li>`
                     }
                     
                 }).join('')
@@ -103,17 +104,77 @@ function Bases(value? : [Character, Weapon]) : string | void {
         </ul>  
     `
 }
-function Finals(base? : number[], value?: (Character|Weapon|Artifact)[]) : string | void {
-    if (base && value) {
+function Finals(base? : number[]) : string | void {
+    if (base) {
         (document.querySelector('[data-header="FINAL"]') as HTMLElement).innerHTML = `
             <ul>
                 ${
                     TYPES.map((val,ind) => {
-                        const character = (value[0] as Character)
-                        const weapon = (value[1] as Weapon)
-                        const artifacts = [...value.slice(2)]
+                        const character = (document.querySelector('iwn-character-form') as CharacterFormComponent).Character
+                        const weapon = (document.querySelector('iwn-weapon-form') as WeaponFormComponent).Weapon
+                        const artifacts = Array.from(document.querySelectorAll('iwn-artifact-form')).map(a => (a as ArtifactFormComponent).Artifact)
 
-                    }).join('')
+                        const BASE = base
+
+                        const BONUS : {[key:string]:any} = {
+                            flat : 0,
+                            percent : 0
+                        }
+
+                        console.group('Character')
+                        if (character.Stats.Bonus[val]) {
+                            console.log(character.Stats.Bonus)
+                            console.log(character.Stats.Bonus[val] || '0',val)
+                            BONUS.flat += character.Stats.Bonus[val] || 0
+                        }
+                        
+                        if (character.Stats.Bonus[`${val}%`]) {
+                            console.log(character.Stats.Bonus)
+                            console.log(character.Stats.Bonus[`${val}%`] || '0',`${val}%`)
+                            BONUS.percent += character.Stats.Bonus[`${val}%`] || 0
+                        }
+                        console.groupEnd()
+
+                        console.group('Weapon')
+                        if (weapon.Stats.Bonus[val]) {
+                            console.log(weapon.Stats.Bonus)
+                            console.log(weapon.Stats.Bonus[val] || '0', val)
+                            BONUS.flat += weapon.Stats.Bonus[val] || 0
+                        }
+                        if (weapon.Stats.Bonus[`${val}%`]) {
+                            console.log(weapon.Stats.Bonus)
+                            console.log(weapon.Stats.Bonus[`${val}%`] || '0', `${val}%`)
+                            BONUS.percent += weapon.Stats.Bonus[`${val}%`] || 0
+                        }
+
+                        console.groupEnd();
+
+                        (artifacts as unknown as Artifact[]).forEach(a => {
+                            console.group(a.Type)
+                            if (a.Stats[val]) {
+                                console.log(a.Stats)
+                                console.log(a.Stats[val] || '0', val)
+                                BONUS.flat += a.Stats[val] || 0
+                            }
+                            if (a.Stats[`${val}%`]) {
+                                console.log(a.Stats)
+                                console.log(a.Stats[`${val}%`] || '0', `${val}%`)
+                                BONUS.percent += a.Stats[`${val}%`] || 0
+                            }
+                            console.groupEnd()
+                        })
+
+                        switch (val) {
+                            case 'HP':
+                            case 'ATK':
+                            case 'DEF':
+                            case 'ElementalMastery':
+                                return (Calc(val, BASE[ind], BONUS.flat, BONUS.percent) as number).toFixed(2)
+                            default:
+                                return `${(Calc(val, BASE[ind], BONUS.flat, BONUS.percent) as number).toFixed(2)}%`
+                        }
+
+                    }).map(a => `<li>${a}</li>`).join('')
                 }
             </ul>
         `
@@ -129,7 +190,7 @@ function Finals(base? : number[], value?: (Character|Weapon|Artifact)[]) : strin
                     if (!character.Stats.Base[a as string]) return 0
 
                     return character.Stats.Base[a as string]
-                }).map(a => `<li>${a}</li>`).join('')
+                }).map(a => `<li>${a}.00</li>`).join('')
             }
         </ul>    
     `
@@ -140,4 +201,10 @@ function Finals(base? : number[], value?: (Character|Weapon|Artifact)[]) : strin
 
 function Calculator(base : number, flats : number, percents : number) {
     return flats + ((base / 100) * percents)
+}
+
+function Calc(stat : string, base : number, flats : number, percent : number) {
+    console.log(...arguments)
+    
+    return base + (((base || 1)/100) * percent) + flats
 }

@@ -1,4 +1,4 @@
-const TYPES = ['HP', 'ATK', 'DEF', 'ElementalMastery', 'EnergyRecharge', 'CriticalRate', 'CriticalDamage', 'HealingBonus', 'ShieldStrength', 'AnemoDamage', 'AnemoResistance', 'GeoDamage', 'GeoResistance', 'ElectroDamage', 'ElectroResistance', , 'DendroDamage', 'DendroResistance', 'HydroDamage', 'HydroResistance', 'PyroDamage', 'PyroResistance', 'CryoDamage', 'CryoResistance', 'PhysicalDamage', 'PhysicalResistance'];
+const TYPES = ['HP', 'ATK', 'DEF', 'ElementalMastery', 'EnergyRecharge', 'CriticalRate', 'CriticalDamage', 'HealingBonus', 'ShieldStrength', 'AnemoDamage', 'AnemoResistance', 'GeoDamage', 'GeoResistance', 'ElectroDamage', 'ElectroResistance', 'DendroDamage', 'DendroResistance', 'HydroDamage', 'HydroResistance', 'PyroDamage', 'PyroResistance', 'CryoDamage', 'CryoResistance', 'PhysicalDamage', 'PhysicalResistance'];
 export default class StatBoardComponent extends HTMLElement {
     constructor() {
         super();
@@ -25,9 +25,10 @@ export default class StatBoardComponent extends HTMLElement {
         window.addEventListener('gic:Update', e => {
             let Character = document.querySelector('iwn-character-form').Character;
             let Weapon = document.querySelector('iwn-weapon-form').Weapon;
-            let Artifacts = Array.from(document.querySelectorAll('iwn-artifact-form')).map(a => a.Artifact);
             Bases([Character, Weapon]);
-            Finals(this.base, [Character, Weapon, ...Artifacts]);
+            this.base = [...(document.querySelectorAll('[data-header="BASE"] li'))].map(a => parseFloat(a.innerHTML));
+            Finals(this.base);
+            this.final = [...(document.querySelectorAll('[data-header="FINAL"] li'))].map(a => parseFloat(a.innerHTML));
         });
     }
 }
@@ -52,13 +53,13 @@ function Bases(value) {
                 case 'DEF':
                 case 'ElementalMastery':
                     value = character.Stats.Base[a];
-                    return `<li>${value !== null && value !== void 0 ? value : 0}</li>`;
+                    return `<li>${(value !== null && value !== void 0 ? value : 0).toFixed(2)}</li>`;
                 case 'ATK':
                     value = Number(character.Stats.Base.ATK) + Number(weapon.Stats.Base.ATK);
-                    return `<li>${value}</li>`;
+                    return `<li>${(value).toFixed(2)}</li>`;
                 default:
                     value = character.Stats.Base[a];
-                    return `<li>${value !== null && value !== void 0 ? value : 0}%</li>`;
+                    return `<li>${(value !== null && value !== void 0 ? value : 0).toFixed(2)}%</li>`;
             }
         }).join('')}
         </ul>    
@@ -82,15 +83,67 @@ function Bases(value) {
         </ul>  
     `;
 }
-function Finals(base, value) {
-    if (base && value) {
+function Finals(base) {
+    if (base) {
         document.querySelector('[data-header="FINAL"]').innerHTML = `
             <ul>
                 ${TYPES.map((val, ind) => {
-            const character = value[0];
-            const weapon = value[1];
-            const artifacts = [...value.slice(2)];
-        }).join('')}
+            const character = document.querySelector('iwn-character-form').Character;
+            const weapon = document.querySelector('iwn-weapon-form').Weapon;
+            const artifacts = Array.from(document.querySelectorAll('iwn-artifact-form')).map(a => a.Artifact);
+            const BASE = base;
+            const BONUS = {
+                flat: 0,
+                percent: 0
+            };
+            console.group('Character');
+            if (character.Stats.Bonus[val]) {
+                console.log(character.Stats.Bonus);
+                console.log(character.Stats.Bonus[val] || '0', val);
+                BONUS.flat += character.Stats.Bonus[val] || 0;
+            }
+            if (character.Stats.Bonus[`${val}%`]) {
+                console.log(character.Stats.Bonus);
+                console.log(character.Stats.Bonus[`${val}%`] || '0', `${val}%`);
+                BONUS.percent += character.Stats.Bonus[`${val}%`] || 0;
+            }
+            console.groupEnd();
+            console.group('Weapon');
+            if (weapon.Stats.Bonus[val]) {
+                console.log(weapon.Stats.Bonus);
+                console.log(weapon.Stats.Bonus[val] || '0', val);
+                BONUS.flat += weapon.Stats.Bonus[val] || 0;
+            }
+            if (weapon.Stats.Bonus[`${val}%`]) {
+                console.log(weapon.Stats.Bonus);
+                console.log(weapon.Stats.Bonus[`${val}%`] || '0', `${val}%`);
+                BONUS.percent += weapon.Stats.Bonus[`${val}%`] || 0;
+            }
+            console.groupEnd();
+            artifacts.forEach(a => {
+                console.group(a.Type);
+                if (a.Stats[val]) {
+                    console.log(a.Stats);
+                    console.log(a.Stats[val] || '0', val);
+                    BONUS.flat += a.Stats[val] || 0;
+                }
+                if (a.Stats[`${val}%`]) {
+                    console.log(a.Stats);
+                    console.log(a.Stats[`${val}%`] || '0', `${val}%`);
+                    BONUS.percent += a.Stats[`${val}%`] || 0;
+                }
+                console.groupEnd();
+            });
+            switch (val) {
+                case 'HP':
+                case 'ATK':
+                case 'DEF':
+                case 'ElementalMastery':
+                    return Calc(val, BASE[ind], BONUS.flat, BONUS.percent).toFixed(2);
+                default:
+                    return `${Calc(val, BASE[ind], BONUS.flat, BONUS.percent).toFixed(2)}%`;
+            }
+        }).map(a => `<li>${a}</li>`).join('')}
             </ul>
         `;
         return;
@@ -102,11 +155,15 @@ function Finals(base, value) {
         if (!character.Stats.Base[a])
             return 0;
         return character.Stats.Base[a];
-    }).map(a => `<li>${a}</li>`).join('')}
+    }).map(a => `<li>${a}.00</li>`).join('')}
         </ul>    
     `;
 }
 //Calculatr Functions
 function Calculator(base, flats, percents) {
     return flats + ((base / 100) * percents);
+}
+function Calc(stat, base, flats, percent) {
+    console.log(...arguments);
+    return base + (((base || 1) / 100) * percent) + flats;
 }

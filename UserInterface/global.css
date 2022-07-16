@@ -1,10 +1,21 @@
 select,
-input {
+input,
+button {
   background-color: #121212;
   padding: .5rem;
   border: none;
   width: 8rem;
   text-align: center;
+}
+
+button.collapse-toggle {
+  background-color: transparent;
+  position: absolute;
+  top: -2.25rem;
+  z-index: 20;
+  color: #000000;
+  font-weight: 900;
+  right: -3rem;
 }
 
 img {
@@ -162,7 +173,7 @@ section [data-form] div span > *:nth-child(even) {
   border-radius: 0 .25rem .25rem 0;
 }
 
-section [data-board] {
+section [data-board="stats"] {
   width: 100%;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -176,14 +187,14 @@ section [data-board] {
   gap: 1rem;
 }
 
-section [data-board] div {
+section [data-board="stats"] div {
   -webkit-box-flex: 1;
       -ms-flex: 1 1 100%;
           flex: 1 1 100%;
   position: relative;
 }
 
-section [data-board] div::before {
+section [data-board="stats"] div::before {
   content: attr(data-header);
   font-size: 1.75rem;
   position: absolute;
@@ -194,15 +205,15 @@ section [data-board] div::before {
   top: .25rem;
 }
 
-section [data-board] div > * {
+section [data-board="stats"] div > * {
   text-align: right;
 }
 
-section [data-board] div:first-of-type > * {
+section [data-board="stats"] div:first-of-type > * {
   text-align: left;
 }
 
-section [data-board] div ul {
+section [data-board="stats"] div ul {
   background-color: #121212;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -217,7 +228,89 @@ section [data-board] div ul {
   padding-top: 2.5rem;
 }
 
-section [data-board] div ul li {
+section [data-board="stats"] div ul li {
   padding: 0 .5rem;
+}
+
+section [data-board="effects"] > div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  gap: 1rem;
+}
+
+section [data-board="effects"] div > div {
+  padding: 1rem 1.5rem;
+  position: relative;
+  border: 0.3rem solid #121212;
+  border-top: 2rem solid #121212;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: .3rem;
+}
+
+section [data-board="effects"] div > div span {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+section [data-board="effects"] div > div span * {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 50%;
+          flex: 1 1 50%;
+}
+
+section [data-board="effects"] div > div::before {
+  content: attr(data-name);
+  position: absolute;
+  top: -1.5rem;
+}
+
+section [data-board="effects"] div > div p {
+  text-align: center;
+  word-wrap: break-word;
+  max-width: 12rem;
+  overflow: hidden;
+  font-size: .85rem;
+  margin-bottom: .5rem;
+}
+
+section [data-board="effects"] div > div p::before {
+  content: attr(data-effect_name);
+  white-space: pre;
+  word-wrap: break-word;
+}
+
+section.closed {
+  min-height: 0;
+  padding: 0;
+}
+
+section.closed *:not(button) {
+  display: none;
 }
 /*# sourceMappingURL=global.css.map */

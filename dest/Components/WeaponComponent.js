@@ -1,5 +1,5 @@
 import { EventDispatcher } from "../Helpers/EventDispatcher.js";
-import { WEAPONS } from "../Variables/DataFile.js";
+import WEAPONS from "../Variables/Weapons.js";
 export default class WeaponFormComponent extends HTMLElement {
     constructor() {
         super();
@@ -54,17 +54,17 @@ export default class WeaponFormComponent extends HTMLElement {
     attributeChangedCallback(name, oldValue, newValue) {
         switch (name) {
             case 'weapon':
-                EventDispatcher('Weapon', changeWeapon(oldValue, newValue));
                 WeaponImage(changeWeapon(oldValue, newValue).NewWp);
                 this.weapon = changeWeapon(oldValue, newValue).NewWp;
+                EventDispatcher('Weapon', changeWeapon(oldValue, newValue));
                 break;
             case 'level':
-                EventDispatcher('WeaponLevel', changeLevel(oldValue, newValue));
                 this.level = Number(changeLevel(oldValue, newValue).New);
+                EventDispatcher('WeaponLevel', changeLevel(oldValue, newValue));
                 break;
             case 'rank':
-                EventDispatcher('WeaponRank', changeLevel(oldValue, newValue));
                 this.rank = Number(changeRank(oldValue, newValue).New);
+                EventDispatcher('WeaponRank', changeLevel(oldValue, newValue));
                 break;
         }
     }

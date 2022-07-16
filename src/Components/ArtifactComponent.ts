@@ -1,6 +1,6 @@
 import { EventDispatcher } from "../Helpers/EventDispatcher.js";
 import { Artifact, ArtifactSet, ArtifactType } from "../types";
-import { ARTIFACT_MAIN_STATS, ARTIFACT_MAIN_STATS_VALUES, ARTIFACT_SETS } from "../Variables/DataFile.js";
+import ARTIFACT_SETS, {ARTIFACT_MAIN_STATS, ARTIFACT_MAIN_STATS_VALUES} from "./../Variables/Artifacts.js"
 
 export default class ArtifactFormComponent extends HTMLElement{
     private type : ArtifactType = 'Flower';
@@ -108,31 +108,56 @@ export default class ArtifactFormComponent extends HTMLElement{
         if (oldValue === null &&this.hasAttribute(name)) return;
         switch (name) {
             case 'set':
-                EventDispatcher(`${this.type}Set`, changeSet(oldValue,newValue))
                 ArtifactImage(this.type, changeSet(oldValue,newValue).NewSt as ArtifactSet)
                 this.set = changeSet(oldValue,newValue).NewSt as ArtifactSet
+                EventDispatcher(`${this.type}Set`, changeSet(oldValue,newValue))
                 break;
             case 'main-stat':
-                EventDispatcher(`${this.type}MainStat`, changeMainStat(oldValue,newValue))
                 if (changeMainStat(oldValue,newValue).TypeChange) {
                     ArtifactMainStat(this.type, changeMainStat(oldValue,newValue).NewMS[0])
+                    this.mainStat[0] = changeMainStat(oldValue,newValue).NewMS
+                    this.mainStat[1] = parseFloat((this.querySelector('#MainStat #Value') as HTMLSelectElement).value)
                 }
-                this.mainStat = changeMainStat(oldValue,newValue).NewMS
+                else {
+                    this.mainStat[1] = changeMainStat(oldValue,newValue).NewMS[1]
+                }
+                EventDispatcher(`${this.type}MainStat`, changeMainStat(oldValue,newValue))
                 break;
             case 'sub-stats':
-                EventDispatcher(`${this.type}SubStat`, changeSubStat(oldValue, newValue))
+                console.log(newValue);
                 this.subStat = changeSubStat(oldValue, newValue).NewSS
+                EventDispatcher(`${this.type}SubStat`, changeSubStat(oldValue, newValue))
                 break;
         }
     }
 
     get Artifact() : Artifact {
+        const stat = (() => { 
+            let temp =  (JSON.parse(JSON.stringify(this.subStat)) as [string,number][])
+            temp.push((JSON.parse(JSON.stringify(this.mainStat)) as [string,number]));
+            return temp 
+        })();
+
+        const Stats : {[key:string] : any} = {}
+        
+        stat.forEach(a => {
+            let A = a as [string, number]
+
+            if (A[0] in Stats) {
+                Stats[A[0]] += A[1]
+            }
+            else {
+                Stats[A[0]] = A[1]
+            }
+
+        })
+
+ 
         const artifact : Artifact = 
         {
             Set : this.set.Name,
             Type : this.type,
-            MainStat : this.mainStat,
-            SubStat : this.subStat
+            Stats,
         }
 
         return artifact;

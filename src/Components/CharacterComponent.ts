@@ -1,6 +1,6 @@
 import { EventDispatcher } from "../Helpers/EventDispatcher.js";
 import { Character } from "../types"
-import { CHARACTERS } from "../Variables/DataFile.js"
+import CHARACTERS from "../Variables/Characters.js"
 
 export default class CharacterFormComponent extends HTMLElement {
     private character : Character = CHARACTERS[0];
@@ -55,17 +55,17 @@ export default class CharacterFormComponent extends HTMLElement {
     attributeChangedCallback(name : string, oldValue : string, newValue : string) : void {
         switch (name) {
             case 'character':
-                EventDispatcher('Character', changeCharacter(oldValue, newValue))
                 CharacterImage(changeCharacter(oldValue, newValue).NewCh)
                 this.character = changeCharacter(oldValue, newValue).NewCh as Character
+                EventDispatcher('Character', changeCharacter(oldValue, newValue))
                 break;
             case 'level':
-                EventDispatcher('CharacterLevel', changeLevel(oldValue, newValue))
                 this.level = Number(changeLevel(oldValue, newValue).New)
+                EventDispatcher('CharacterLevel', changeLevel(oldValue, newValue))
                 break;
             case 'rank':
-                EventDispatcher('CharacterRank', changeRank(oldValue, newValue))
                 this.rank = Number(changeRank(oldValue, newValue).New)
+                EventDispatcher('CharacterRank', changeRank(oldValue, newValue))
                 break;
         }
     }
@@ -74,6 +74,7 @@ export default class CharacterFormComponent extends HTMLElement {
         const character = JSON.parse(JSON.stringify(this.character)) as Character
 
         character.Rank = this.rank;
+        character.Level = this.level;
 
         const base = character.Stats.Base;
         const bonus = character.Stats.Bonus;
