@@ -253,7 +253,6 @@ export default [
             const DEF = document.querySelector('iwn-statboard').Final[types.DEF];
             const VAR = document.querySelector(`#${this.id} p var`);
             const SCALING = [.4, .5, .6, .7, .8][REF_RANK];
-            console.log(DEF);
             state.ElementalSkillBoost = parseFloat((SCALING * DEF).toFixed(2));
             return state;
         }

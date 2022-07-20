@@ -144,7 +144,6 @@ export default [
                     output = BOOST_BONUS(output, BOOST, BONUS);
                     NORMAL.innerHTML = `${output.toFixed(2)}`;
                     CRIT.innerHTML = `${output.toFixed(2)}`;
-                    console.log(NORMAL, CRIT, BONUS, BOOST);
                 });
             }
         },
