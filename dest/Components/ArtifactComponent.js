@@ -71,7 +71,7 @@ export default class ArtifactFormComponent extends HTMLElement {
             };
         });
     }
-    diconnectedCallback() {
+    disconnectedCallback() {
         this.querySelector('#Set').onchange = null;
         this.querySelector('#MainStat #Type').onchange = null;
         this.querySelector('#MainStat #Value').onchange = null;
@@ -91,7 +91,7 @@ export default class ArtifactFormComponent extends HTMLElement {
             case 'main-stat':
                 if (changeMainStat(oldValue, newValue).TypeChange) {
                     ArtifactMainStat(this.type, changeMainStat(oldValue, newValue).NewMS[0]);
-                    this.mainStat[0] = changeMainStat(oldValue, newValue).NewMS;
+                    this.mainStat[0] = changeMainStat(oldValue, newValue).NewMS[0];
                     this.mainStat[1] = parseFloat(this.querySelector('#MainStat #Value').value);
                 }
                 else {

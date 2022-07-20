@@ -1,4 +1,38 @@
 import EFFECTS from './Effects.js';
+export const types = {
+    HP: 0,
+    ATK: 1,
+    DEF: 2,
+    ElementalMastery: 3,
+    EnergyRecharge: 4,
+    CriticalRate: 5,
+    CriticalDamage: 6,
+    HealingBonus: 7,
+    ShieldStrength: 8,
+    AnemoDamage: 9,
+    AnemoResistance: 10,
+    GeoDamage: 11,
+    GeoResistance: 12,
+    ElectroDamage: 13,
+    ElectroResistance: 14,
+    DendroDamage: 15,
+    DendroResistance: 16,
+    HydroDamage: 17,
+    HydroResistance: 18,
+    PyroDamage: 19,
+    PyroResistance: 20,
+    CryoDamage: 21,
+    CryoResistance: 22,
+    PhysicalDamage: 23,
+    PhysicalResistance: 24,
+    MoveSpeed: 25,
+    AttackSpeed: 26,
+    NormalAttackDamage: 27,
+    ChargedAttackDamage: 28,
+    PlungeDamage: 29,
+    ElementalSkillDamage: 30,
+    ElementalBurstDamage: 31,
+};
 export default [
     {
         Name: 'Albedo',
@@ -20,7 +54,13 @@ export default [
                 GeoDamage: [0, 0, 0, 0, 7.2, 7.2, 14.4, 14.4, 14.4, 14.4, 21.6, 21.6, 28.8, 28.8],
             }
         },
-        Passives: ['Calcite Might', 'Homuncular Nature']
+        Talents: {
+            NormalAttack: 'Favonious Bladework - Weiss',
+            ElementalSkill: 'Abiogenesis: Solar Istoma',
+            ElementalBurst: 'Rite of Progeniture: Tectonic Tide',
+            A1Passive: 'Calcite Might',
+            A4Passive: 'Homuncular Nature'
+        },
     },
     {
         Name: 'Jean',
@@ -42,7 +82,13 @@ export default [
                 HealingBonus: [0, 0, 0, 0, 5.5, 5.5, 11.1, 11.1, 11.1, 11.1, 16.6, 16.6, 22.2, 22.2]
             }
         },
-        Passives: [EFFECTS[0].name, EFFECTS[0].name],
+        Talents: {
+            NormalAttack: '',
+            ElementalSkill: '',
+            ElementalBurst: '',
+            A1Passive: 'Wind Companion',
+            A4Passive: 'Let the Wind Lead'
+        },
     },
     {
         Name: 'Bennett',
@@ -64,7 +110,13 @@ export default [
                 EnergyRecharge: [0, 0, 0, 0, 6.7, 6.7, 13.3, 13.3, 13.3, 13.3, 20, 20, 26.7, 26.7]
             }
         },
-        Passives: [EFFECTS[0].name, EFFECTS[0].name],
+        Talents: {
+            NormalAttack: '',
+            ElementalSkill: '',
+            ElementalBurst: '',
+            A1Passive: EFFECTS[0].name,
+            A4Passive: EFFECTS[0].name
+        },
     },
     {
         Name: 'Eula',
@@ -86,7 +138,13 @@ export default [
                 CriticalDamage: [0, 0, 0, 0, 9.6, 9.6, 19.2, 19.2, 19.2, 19.2, 28.8, 28.8, 38.4, 38.4]
             }
         },
-        Passives: [EFFECTS[0].name, EFFECTS[0].name],
+        Talents: {
+            NormalAttack: '',
+            ElementalSkill: '',
+            ElementalBurst: '',
+            A1Passive: EFFECTS[0].name,
+            A4Passive: EFFECTS[0].name
+        },
     },
     {
         Name: 'Xiao',
@@ -108,6 +166,12 @@ export default [
                 CriticalRate: [0, 0, 0, 0, 4.8, 4.8, 9.6, 9.6, 9.6, 9.6, 14.4, 14.4, 19.2, 19.2]
             }
         },
-        Passives: [EFFECTS[0].name, EFFECTS[0].name],
+        Talents: {
+            NormalAttack: '',
+            ElementalSkill: '',
+            ElementalBurst: '',
+            A1Passive: EFFECTS[0].name,
+            A4Passive: EFFECTS[0].name
+        },
     },
 ];

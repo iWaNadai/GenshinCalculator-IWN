@@ -1,13 +1,16 @@
-import { Artifact, Character, Weapon } from "../types"
+import { EventDispatcher } from "../Helpers/EventDispatcher.js"
+import { Artifact, Character, Weapon} from "../types"
+import { IHTMLElement } from '../typeGuard.js';
 import ArtifactFormComponent from "./ArtifactComponent"
 import CharacterFormComponent from "./CharacterComponent.js"
+import EffectsFormComponenet from "./EffectsComponent"
 import WeaponFormComponent from "./WeaponComponent.js"
+import {types} from "./../Variables/Characters.js"
 
-const TYPES : string[] = ['HP','ATK','DEF','ElementalMastery','EnergyRecharge','CriticalRate','CriticalDamage','HealingBonus','ShieldStrength','AnemoDamage','AnemoResistance','GeoDamage','GeoResistance','ElectroDamage','ElectroResistance','DendroDamage','DendroResistance','HydroDamage','HydroResistance','PyroDamage','PyroResistance','CryoDamage','CryoResistance','PhysicalDamage','PhysicalResistance'] as string[]
-
-export default class StatBoardComponent extends HTMLElement {
-    public base : number[] = []
-    public final : number[] = []
+const TYPES = Object.keys(types)
+export default class StatBoardComponent extends HTMLElement implements IHTMLElement {
+    private base : number[] = []
+    private final : number[] = []
     
     constructor() {
         super()
@@ -29,12 +32,19 @@ export default class StatBoardComponent extends HTMLElement {
         `
 
         this.base = [...(document.querySelectorAll('[data-header="BASE"] li'))].map(a => parseFloat((a as HTMLElement).innerHTML))
+        
+        
         this.final = [...(document.querySelectorAll('[data-header="FINAL"] li'))].map(a => parseFloat((a as HTMLElement).innerHTML))
+
     }
 
     connectedCallback() {
         window.addEventListener('gic:Update', e => {
-            let Character = (document.querySelector('iwn-character-form') as CharacterFormComponent).Character as Character;
+            const changed = (e as CustomEvent).detail.changed
+
+            if (changed === 'Stats') {return}
+
+            let Character = (document.querySelector('iwn-weapon-form') as CharacterFormComponent).Character as Character;
             let Weapon = (document.querySelector('iwn-weapon-form') as WeaponFormComponent).Weapon as Weapon;
 
             Bases([Character, Weapon]);
@@ -42,7 +52,29 @@ export default class StatBoardComponent extends HTMLElement {
             Finals(this.base);
             this.final = [...(document.querySelectorAll('[data-header="FINAL"] li'))].map(a => parseFloat((a as HTMLElement).innerHTML))
 
+            EventDispatcher('Stats', {base : this.base, final : this.Final})
         })
+    }
+    
+    disconnectedCallback() {
+        
+    }
+
+    public get Final() {
+        return JSON.parse(JSON.stringify(this.final))
+    }
+
+    public get SecretBonus() {
+        const EFFECT_BONUS = (document.querySelector('iwn-effect-form') as EffectsFormComponenet).Bonus
+        
+        const state : {[key:string]:any} = {}
+        Object.keys(EFFECT_BONUS).forEach(a => {
+            if (!(a in types)) {
+                state[a] = EFFECT_BONUS[a]
+            }
+        })
+
+        return state
     }
 }
 
@@ -113,6 +145,7 @@ function Finals(base? : number[]) : string | void {
                         const character = (document.querySelector('iwn-character-form') as CharacterFormComponent).Character
                         const weapon = (document.querySelector('iwn-weapon-form') as WeaponFormComponent).Weapon
                         const artifacts = Array.from(document.querySelectorAll('iwn-artifact-form')).map(a => (a as ArtifactFormComponent).Artifact)
+                        const effects = (document.querySelector('iwn-effect-form') as EffectsFormComponenet).Bonus
 
                         const BASE = base
 
@@ -121,48 +154,62 @@ function Finals(base? : number[]) : string | void {
                             percent : 0
                         }
 
-                        console.group('Character')
+                        // console.group('Character')
                         if (character.Stats.Bonus[val]) {
-                            console.log(character.Stats.Bonus)
-                            console.log(character.Stats.Bonus[val] || '0',val)
+                            // console.log(character.Stats.Bonus)
+                            // console.log(character.Stats.Bonus[val] || '0',val)
                             BONUS.flat += character.Stats.Bonus[val] || 0
                         }
                         
                         if (character.Stats.Bonus[`${val}%`]) {
-                            console.log(character.Stats.Bonus)
-                            console.log(character.Stats.Bonus[`${val}%`] || '0',`${val}%`)
+                            // console.log(character.Stats.Bonus)
+                            // console.log(character.Stats.Bonus[`${val}%`] || '0',`${val}%`)
                             BONUS.percent += character.Stats.Bonus[`${val}%`] || 0
                         }
-                        console.groupEnd()
+                        // console.groupEnd()
 
-                        console.group('Weapon')
+                        // console.group('Weapon')
                         if (weapon.Stats.Bonus[val]) {
-                            console.log(weapon.Stats.Bonus)
-                            console.log(weapon.Stats.Bonus[val] || '0', val)
+                            // console.log(weapon.Stats.Bonus)
+                            // console.log(weapon.Stats.Bonus[val] || '0', val)
                             BONUS.flat += weapon.Stats.Bonus[val] || 0
                         }
                         if (weapon.Stats.Bonus[`${val}%`]) {
-                            console.log(weapon.Stats.Bonus)
-                            console.log(weapon.Stats.Bonus[`${val}%`] || '0', `${val}%`)
+                            // console.log(weapon.Stats.Bonus)
+                            // console.log(weapon.Stats.Bonus[`${val}%`] || '0', `${val}%`)
                             BONUS.percent += weapon.Stats.Bonus[`${val}%`] || 0
                         }
 
-                        console.groupEnd();
+                        // console.groupEnd();
 
                         (artifacts as unknown as Artifact[]).forEach(a => {
-                            console.group(a.Type)
+                            // console.log(a.Stats)
+                            // console.group(a.Type)
                             if (a.Stats[val]) {
-                                console.log(a.Stats)
-                                console.log(a.Stats[val] || '0', val)
+                                // console.log(a.Stats)
+                                // console.log(a.Stats[val] || '0', val)
                                 BONUS.flat += a.Stats[val] || 0
                             }
                             if (a.Stats[`${val}%`]) {
-                                console.log(a.Stats)
-                                console.log(a.Stats[`${val}%`] || '0', `${val}%`)
+                                // console.log(a.Stats)
+                                // console.log(a.Stats[`${val}%`] || '0', `${val}%`)
                                 BONUS.percent += a.Stats[`${val}%`] || 0
                             }
-                            console.groupEnd()
+                            // console.groupEnd()
                         })
+
+                        // console.group('effects')
+                        if (effects[val]) {
+                            // console.log(effects)
+                            // console.log(effects[val] || '0', val)
+                            BONUS.flat += effects[val] || 0
+                        }
+                        if (effects[`${val}%`]) {
+                            // console.log(effects)
+                            // console.log(effects[`${val}%`] || '0', val)
+                            BONUS.percent += effects[`${val}%`] || 0
+                        }
+                        // console.groupEnd()
 
                         switch (val) {
                             case 'HP':
@@ -174,7 +221,14 @@ function Finals(base? : number[]) : string | void {
                                 return `${(Calc(val, BASE[ind], BONUS.flat, BONUS.percent) as number).toFixed(2)}%`
                         }
 
-                    }).map(a => `<li>${a}</li>`).join('')
+                    }).map((a,b)=> {
+                        switch (parseFloat(a) > base[b]) {
+                            case true:
+                                return `<li class="increase">${a}</li>`
+                            case false:
+                                return `<li>${a}</li>`
+                        }
+                    }).join('')
                 }
             </ul>
         `
@@ -199,12 +253,8 @@ function Finals(base? : number[]) : string | void {
 
 //Calculatr Functions
 
-function Calculator(base : number, flats : number, percents : number) {
-    return flats + ((base / 100) * percents)
-}
-
 function Calc(stat : string, base : number, flats : number, percent : number) {
-    console.log(...arguments)
+    // console.log(...arguments)
     
     return base + (((base || 1)/100) * percent) + flats
 }

@@ -1,8 +1,9 @@
 import { EventDispatcher } from "../Helpers/EventDispatcher.js";
 import { Artifact, ArtifactSet, ArtifactType } from "../types";
 import ARTIFACT_SETS, {ARTIFACT_MAIN_STATS, ARTIFACT_MAIN_STATS_VALUES} from "./../Variables/Artifacts.js"
+import { IHTMLElement } from '../typeGuard.js';
 
-export default class ArtifactFormComponent extends HTMLElement{
+export default class ArtifactFormComponent extends HTMLElement implements IHTMLElement{
     private type : ArtifactType = 'Flower';
     private set : ArtifactSet = ARTIFACT_SETS[0]
     private mainStat : [string, number]
@@ -94,7 +95,7 @@ export default class ArtifactFormComponent extends HTMLElement{
         })
     }
 
-    diconnectedCallback() : void {
+    disconnectedCallback() : void {
         (this.querySelector('#Set') as HTMLSelectElement).onchange = null;
         (this.querySelector('#MainStat #Type') as HTMLSelectElement).onchange = null;
         (this.querySelector('#MainStat #Value') as HTMLSelectElement).onchange = null;
@@ -115,7 +116,7 @@ export default class ArtifactFormComponent extends HTMLElement{
             case 'main-stat':
                 if (changeMainStat(oldValue,newValue).TypeChange) {
                     ArtifactMainStat(this.type, changeMainStat(oldValue,newValue).NewMS[0])
-                    this.mainStat[0] = changeMainStat(oldValue,newValue).NewMS
+                    this.mainStat[0] = changeMainStat(oldValue,newValue).NewMS[0]
                     this.mainStat[1] = parseFloat((this.querySelector('#MainStat #Value') as HTMLSelectElement).value)
                 }
                 else {

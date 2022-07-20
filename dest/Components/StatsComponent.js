@@ -1,4 +1,6 @@
-const TYPES = ['HP', 'ATK', 'DEF', 'ElementalMastery', 'EnergyRecharge', 'CriticalRate', 'CriticalDamage', 'HealingBonus', 'ShieldStrength', 'AnemoDamage', 'AnemoResistance', 'GeoDamage', 'GeoResistance', 'ElectroDamage', 'ElectroResistance', 'DendroDamage', 'DendroResistance', 'HydroDamage', 'HydroResistance', 'PyroDamage', 'PyroResistance', 'CryoDamage', 'CryoResistance', 'PhysicalDamage', 'PhysicalResistance'];
+import { EventDispatcher } from "../Helpers/EventDispatcher.js";
+import { types } from "./../Variables/Characters.js";
+const TYPES = Object.keys(types);
 export default class StatBoardComponent extends HTMLElement {
     constructor() {
         super();
@@ -23,13 +25,33 @@ export default class StatBoardComponent extends HTMLElement {
     }
     connectedCallback() {
         window.addEventListener('gic:Update', e => {
-            let Character = document.querySelector('iwn-character-form').Character;
+            const changed = e.detail.changed;
+            if (changed === 'Stats') {
+                return;
+            }
+            let Character = document.querySelector('iwn-weapon-form').Character;
             let Weapon = document.querySelector('iwn-weapon-form').Weapon;
             Bases([Character, Weapon]);
             this.base = [...(document.querySelectorAll('[data-header="BASE"] li'))].map(a => parseFloat(a.innerHTML));
             Finals(this.base);
             this.final = [...(document.querySelectorAll('[data-header="FINAL"] li'))].map(a => parseFloat(a.innerHTML));
+            EventDispatcher('Stats', { base: this.base, final: this.Final });
         });
+    }
+    disconnectedCallback() {
+    }
+    get Final() {
+        return JSON.parse(JSON.stringify(this.final));
+    }
+    get SecretBonus() {
+        const EFFECT_BONUS = document.querySelector('iwn-effect-form').Bonus;
+        const state = {};
+        Object.keys(EFFECT_BONUS).forEach(a => {
+            if (!(a in types)) {
+                state[a] = EFFECT_BONUS[a];
+            }
+        });
+        return state;
     }
 }
 //Renderers 
@@ -91,49 +113,63 @@ function Finals(base) {
             const character = document.querySelector('iwn-character-form').Character;
             const weapon = document.querySelector('iwn-weapon-form').Weapon;
             const artifacts = Array.from(document.querySelectorAll('iwn-artifact-form')).map(a => a.Artifact);
+            const effects = document.querySelector('iwn-effect-form').Bonus;
             const BASE = base;
             const BONUS = {
                 flat: 0,
                 percent: 0
             };
-            console.group('Character');
+            // console.group('Character')
             if (character.Stats.Bonus[val]) {
-                console.log(character.Stats.Bonus);
-                console.log(character.Stats.Bonus[val] || '0', val);
+                // console.log(character.Stats.Bonus)
+                // console.log(character.Stats.Bonus[val] || '0',val)
                 BONUS.flat += character.Stats.Bonus[val] || 0;
             }
             if (character.Stats.Bonus[`${val}%`]) {
-                console.log(character.Stats.Bonus);
-                console.log(character.Stats.Bonus[`${val}%`] || '0', `${val}%`);
+                // console.log(character.Stats.Bonus)
+                // console.log(character.Stats.Bonus[`${val}%`] || '0',`${val}%`)
                 BONUS.percent += character.Stats.Bonus[`${val}%`] || 0;
             }
-            console.groupEnd();
-            console.group('Weapon');
+            // console.groupEnd()
+            // console.group('Weapon')
             if (weapon.Stats.Bonus[val]) {
-                console.log(weapon.Stats.Bonus);
-                console.log(weapon.Stats.Bonus[val] || '0', val);
+                // console.log(weapon.Stats.Bonus)
+                // console.log(weapon.Stats.Bonus[val] || '0', val)
                 BONUS.flat += weapon.Stats.Bonus[val] || 0;
             }
             if (weapon.Stats.Bonus[`${val}%`]) {
-                console.log(weapon.Stats.Bonus);
-                console.log(weapon.Stats.Bonus[`${val}%`] || '0', `${val}%`);
+                // console.log(weapon.Stats.Bonus)
+                // console.log(weapon.Stats.Bonus[`${val}%`] || '0', `${val}%`)
                 BONUS.percent += weapon.Stats.Bonus[`${val}%`] || 0;
             }
-            console.groupEnd();
+            // console.groupEnd();
             artifacts.forEach(a => {
-                console.group(a.Type);
+                // console.log(a.Stats)
+                // console.group(a.Type)
                 if (a.Stats[val]) {
-                    console.log(a.Stats);
-                    console.log(a.Stats[val] || '0', val);
+                    // console.log(a.Stats)
+                    // console.log(a.Stats[val] || '0', val)
                     BONUS.flat += a.Stats[val] || 0;
                 }
                 if (a.Stats[`${val}%`]) {
-                    console.log(a.Stats);
-                    console.log(a.Stats[`${val}%`] || '0', `${val}%`);
+                    // console.log(a.Stats)
+                    // console.log(a.Stats[`${val}%`] || '0', `${val}%`)
                     BONUS.percent += a.Stats[`${val}%`] || 0;
                 }
-                console.groupEnd();
+                // console.groupEnd()
             });
+            // console.group('effects')
+            if (effects[val]) {
+                // console.log(effects)
+                // console.log(effects[val] || '0', val)
+                BONUS.flat += effects[val] || 0;
+            }
+            if (effects[`${val}%`]) {
+                // console.log(effects)
+                // console.log(effects[`${val}%`] || '0', val)
+                BONUS.percent += effects[`${val}%`] || 0;
+            }
+            // console.groupEnd()
             switch (val) {
                 case 'HP':
                 case 'ATK':
@@ -143,7 +179,14 @@ function Finals(base) {
                 default:
                     return `${Calc(val, BASE[ind], BONUS.flat, BONUS.percent).toFixed(2)}%`;
             }
-        }).map(a => `<li>${a}</li>`).join('')}
+        }).map((a, b) => {
+            switch (parseFloat(a) > base[b]) {
+                case true:
+                    return `<li class="increase">${a}</li>`;
+                case false:
+                    return `<li>${a}</li>`;
+            }
+        }).join('')}
             </ul>
         `;
         return;
@@ -160,10 +203,7 @@ function Finals(base) {
     `;
 }
 //Calculatr Functions
-function Calculator(base, flats, percents) {
-    return flats + ((base / 100) * percents);
-}
 function Calc(stat, base, flats, percent) {
-    console.log(...arguments);
+    // console.log(...arguments)
     return base + (((base || 1) / 100) * percent) + flats;
 }

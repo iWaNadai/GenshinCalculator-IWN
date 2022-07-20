@@ -232,6 +232,10 @@ section [data-board="stats"] div ul li {
   padding: 0 .5rem;
 }
 
+section [data-board="stats"] div ul li.increase {
+  color: #bb86fc;
+}
+
 section [data-board="effects"] > div {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -296,13 +300,108 @@ section [data-board="effects"] div > div p {
   max-width: 12rem;
   overflow: hidden;
   font-size: .85rem;
+  word-wrap: break-word;
   margin-bottom: .5rem;
 }
 
-section [data-board="effects"] div > div p::before {
-  content: attr(data-effect_name);
-  white-space: pre;
-  word-wrap: break-word;
+section [data-board="effects"] div > div p var {
+  color: #bb86fc;
+}
+
+section [data-board="talents"] {
+  width: 100%;
+}
+
+section [data-board="talents"] > div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  position: relative;
+}
+
+section [data-board="talents"] div > div {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  padding: 1rem 1.5rem;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 0 100%;
+          flex: 1 0 100%;
+  gap: .3rem;
+  border-top: 3rem solid #bb86fc;
+  background-color: #121212;
+  position: relative;
+}
+
+section [data-board="talents"] div > div::before {
+  content: attr(data-name);
+  position: absolute;
+  top: -2.25rem;
+  font-size: 1.25rem;
+  color: #000000;
+}
+
+section [data-board="talents"] div > div span#Level {
+  display: inline;
+  position: absolute;
+  top: -3rem;
+  right: 0;
+  background: transparent;
+}
+
+section [data-board="talents"] div > div span#Level label {
+  color: #000000;
+}
+
+section [data-board="talents"] div > div span#Level input {
+  background-color: #000000;
+}
+
+section [data-board="talents"] div > div span {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
+  background-color: #000000;
+  padding: .5rem 1rem;
+}
+
+section [data-board="talents"] div > div span p {
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+section [data-board="talents"] div > div span p.name {
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: start;
+  padding-left: 1.5rem;
+}
+
+section [data-board="talents"] div > div span p.crit-or-bonus {
+  color: #bb86fc;
 }
 
 section.closed {

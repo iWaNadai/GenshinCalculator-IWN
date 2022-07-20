@@ -92,9 +92,13 @@ $FONT : #ffffff;
                 gap : .5rem;
                 padding: .5rem 0;
                 padding-top: 2.5rem;
-
+                
                 li { 
                     padding: 0 .5rem;
+
+                    &.increase{
+                        color : $ACCENT-COLOR-0;
+                    }
                 }
             }
         }
@@ -140,12 +144,83 @@ $FONT : #ffffff;
                 max-width: 12rem;
                 overflow: hidden;
                 font-size: .85rem;
-                &::before{
-                    content: attr(data-effect_name);
-                    white-space: pre;
-                    word-wrap: break-word;
-                }
+                word-wrap: break-word;
                 margin-bottom: .5rem;
+
+                var {
+                    color: $ACCENT-COLOR-0;
+                }
+            }
+        }
+    }
+
+    [data-board="talents"] {
+        width: 100%;
+
+        & > div {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap : 1rem;
+            width: 100%;
+            position: relative;
+        }
+
+        div > div {
+            display: flex;
+            flex-direction: column;
+            padding:  1rem 1.5rem;
+            flex: 1 0 100%;
+            gap : .3rem;
+            border-top: 3rem solid $ACCENT-COLOR-0;
+            background-color: $MAIN-COLOR-0;
+            position: relative;
+
+            &::before {
+                content: attr(data-name);
+                position: absolute;
+                top: -2.25rem;
+                font-size: 1.25rem;
+                color : $MAIN-COLOR-1
+            }
+
+            span#Level {
+                display: inline;
+                position: absolute;
+                top : -3rem;
+                right : 0;
+                background: transparent;
+
+                label {
+                    color : $MAIN-COLOR-1
+                }
+                input {
+                    background-color: $MAIN-COLOR-1;
+                }
+            }
+            
+            span {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                background-color: $MAIN-COLOR-1;
+                padding: .5rem 1rem;
+                
+                p {
+                    justify-content: center;
+                    display: flex;
+                    align-items: center;
+                }
+
+                p.name {
+                    justify-content: start;
+                    padding-left: 1.5rem;
+                }
+
+                p.crit-or-bonus {
+                    color : $ACCENT-COLOR-0
+                }
+
             }
         }
     }

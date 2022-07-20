@@ -1,6 +1,8 @@
 import { EventDispatcher } from '../Helpers/EventDispatcher.js';
+import { types } from './Characters.js';
 export default [
     {
+        type: 'Effect',
         name: 'Character State',
         id: 'Character-State',
         formRender() {
@@ -33,12 +35,15 @@ export default [
         },
     },
     {
+        type: 'Effect',
         name: 'Elemental Resonance',
         id: 'Elemental-Resonance',
         formRender() {
             return `
                 <div id="${this.id}" data-name="${this.name}">
-                    <p data-effect_name="Elemental Resistance +15%, \n Physical Resistance +15%"></p>
+                    <p>
+                        Elemental Resistance <var>+15%</var>, <br> Physical Resistance <var>+15%</var>
+                    </p>
                     <select id="Selector">
                         ${(() => {
                 const EFFECT_NAMES = {
@@ -78,21 +83,21 @@ export default [
                 let effect = '';
                 const EFFECT_NAME = document.querySelector(`#${ID} #Selector`).value;
                 if (EFFECT_NAME.includes('Protective Canopy')) {
-                    effect += 'Elemental Resistance +15%,\nPhysical Resistance +15%,\n';
+                    effect += 'Elemental Resistance <var>+15%</var>,<br>Physical Resistance <var>+15%</var>,<br>';
                 }
                 if (EFFECT_NAME.includes('Impetuous Winds')) {
-                    effect += 'Move Speed +10%,\nCooldown Reduction +5%,\n';
+                    effect += 'Move Speed <var>+10%</var>,<br>Cooldown Reduction <var>+5%</var>,<br>';
                 }
                 if (EFFECT_NAME.includes('Enduring Rock')) {
-                    effect += 'Shield Strength +15%,\nTotal Damage Bonus +15%\n(When Shielded),\n';
+                    effect += 'Shield Strength <var>+15%</var>,<br>Total Damage Bonus <var>+15%</var><br>(When Shielded),<br>';
                 }
                 if (EFFECT_NAME.includes('Soothing Water')) {
-                    effect += 'Incoming Healing +30%,\n';
+                    effect += 'Incoming Healing <var>+30%</var>,<br>';
                 }
                 if (EFFECT_NAME.includes('Fervent Flames')) {
-                    effect += 'ATK% +25%,\n';
+                    effect += 'ATK% <var>+25%</var>,<br>';
                 }
-                document.querySelector(`#${ID} p`).dataset.effect_name = effect;
+                document.querySelector(`#${ID} p`).innerHTML = effect;
                 EventDispatcher('Effect', { type: 'ElementalResonance', subType: 'NA' });
             }
         },
@@ -154,12 +159,15 @@ export default [
         }
     },
     {
+        type: 'Effect',
         name: 'Calcite Might',
         id: 'Calcite-Might',
         formRender() {
             return `
                 <div id="${this.id}" data-name="${this.name}">
-                    <p data-effect_name="Burst Damage +25%\n(when enemy is < 50% HP)"></p>
+                    <p>
+                        Transient Blossom Damage\n <var>+25%</var><br>(when enemy is < 50% HP)
+                    </p>
                 </div>
             `;
         },
@@ -170,19 +178,23 @@ export default [
         output() {
             const state = {};
             const CONDITION = parseFloat(document.querySelector(`#Enemy-State [name="currentHP"]`) ? document.querySelector(`#Enemy-State [name="currentHP"]`).value : '100');
-            if (CONDITION < 50) {
-                state.BurstDamage = 25;
+            if (true) {
+                state['TransientBlossomDamage'] = 25;
+                console.log(state);
             }
             return state;
         }
     },
     {
+        type: 'Effect',
         name: 'Homuncular Nature',
         id: 'Homuncular-Nature',
         formRender() {
             return `
                 <div id="${this.id}" data-name="${this.name}">
-                    <p data-effect_name="Elemental Mastery +125\n(After using Burst)"></p>
+                    <p>
+                        Elemental Mastery <var>+125</var><br>(After using Burst)
+                    </p>
                     <span>
                         <label for="usedBurst">Used Burst</label>
                         <input type="checkbox" name="usedBurst">
@@ -209,14 +221,41 @@ export default [
         }
     },
     {
-        name: '',
-        id: '',
+        type: 'Effect',
+        name: 'Spotless Heart',
+        id: 'Spotless-Heart',
         formRender() {
-            return ``;
+            return `
+                <div id="${this.id}" data-name="${this.name}">
+                    <p>
+                        Elemental Skill DMG \n<var>+40% DEF</var>
+                    </p>
+                </div>
+            `;
         },
         connect() {
+            window.addEventListener('gic:Update', e => {
+                const CHANGED = e.detail.changed;
+                if (CHANGED === 'Stats') {
+                    const REF_RANK = document.querySelector('iwn-weapon-form').Weapon.Rank;
+                    const DEF = document.querySelector('iwn-statboard').Final[types.DEF];
+                    const VAR = document.querySelector(`#${this.id} p var`);
+                    const SCALING = [.4, .5, .6, .7, .8][REF_RANK];
+                    VAR.innerHTML = `+${(SCALING * DEF).toFixed(2)}`;
+                }
+            });
         },
         disconnect() {
+        },
+        output() {
+            let state = {};
+            const REF_RANK = document.querySelector('iwn-weapon-form').Weapon.Rank;
+            const DEF = document.querySelector('iwn-statboard').Final[types.DEF];
+            const VAR = document.querySelector(`#${this.id} p var`);
+            const SCALING = [.4, .5, .6, .7, .8][REF_RANK];
+            console.log(DEF);
+            state.ElementalSkillBoost = parseFloat((SCALING * DEF).toFixed(2));
+            return state;
         }
     }
 ];

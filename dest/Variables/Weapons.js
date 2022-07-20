@@ -10,7 +10,8 @@ export default [
             Bonus: {
                 "DEF%": [15, 26.5, 26.5, 38.7, 38.7, 44.7, 44.7, 50.8, 50.8, 56.8, 56.8, 62.9, 62.9, 69]
             }
-        }
+        },
+        Passive: ['Spotless Heart'],
     },
     {
         Name: 'Festering Desire',
@@ -23,7 +24,8 @@ export default [
             Bonus: {
                 EnergyRecharge: [10, 17.7, 17.7, 25.8, 25.8, 29.8, 29.8, 33.8, 33.8, 37.9, 37.9, 41.9, 41.9, 45.9]
             }
-        }
+        },
+        Passive: []
     },
     {
         Name: 'Song of Broken Pines',
@@ -36,7 +38,8 @@ export default [
             Bonus: {
                 PhysicalDamage: [4.5, 8, 8, 11.6, 11.6, 13.4, 13.4, 15.2, 15.2, 17, 17, 18.9, 18.9, 20.7]
             }
-        }
+        },
+        Passive: []
     },
     {
         Name: 'Snow-Tombed Starsilver',
@@ -49,7 +52,8 @@ export default [
             Bonus: {
                 PhysicalDamage: [7.5, 13.3, 13.3, 19.3, 19.3, 22.4, 22.4, 25.4, 25.4, 28.4, 28.4, 31.5, 31.5, 34.5]
             }
-        }
+        },
+        Passive: []
     },
     {
         Name: 'Primordial Jade Winged-Spear',
@@ -62,7 +66,8 @@ export default [
             Bonus: {
                 CriticalRate: [4.8, 8.5, 8.5, 12.4, 12.4, 14.3, 14.3, 16.2, 16.2, 18.2, 18.2, 20.1, 20.1, 22.1]
             }
-        }
+        },
+        Passive: []
     },
     {
         Name: 'Lithic Spear',
@@ -75,6 +80,7 @@ export default [
             Bonus: {
                 "ATK%": [6, 10.6, 10.6, 15.5, 15.5, 17.9, 17.9, 20.3, 20.3, 22.7, 22.7, 25.1, 25.1, 27.6]
             }
-        }
+        },
+        Passive: []
     }
 ];

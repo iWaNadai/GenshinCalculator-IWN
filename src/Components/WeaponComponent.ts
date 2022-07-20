@@ -1,8 +1,9 @@
 import { EventDispatcher } from "../Helpers/EventDispatcher.js";
 import { Character, Weapon } from "../types";
 import WEAPONS from "../Variables/Weapons.js";
+import { IHTMLElement } from '../typeGuard.js';
 
-export default class WeaponFormComponent extends HTMLElement {
+export default class WeaponFormComponent extends HTMLElement implements IHTMLElement{
     private weapon : Weapon = WEAPONS[0];
     private level : number = 0;
     private rank : number = 0;

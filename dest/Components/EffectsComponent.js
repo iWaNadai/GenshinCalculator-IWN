@@ -29,10 +29,12 @@ export default class EffectsFormComponenet extends HTMLElement {
                 this.render(true);
             }
             // this.effects.forEach(a => console.log((a?.output) ?  a.output() : 'undefined'))
-            this.bonus = {};
-            for (const value of this.effects) {
-                const ARG = (value === null || value === void 0 ? void 0 : value.output) ? value.output() : {};
-                this.setValues(ARG);
+            if (changed === 'Stats') {
+                this.bonus = {};
+                for (const value of this.effects) {
+                    const ARG = (value === null || value === void 0 ? void 0 : value.output) ? value.output() : {};
+                    this.setValues(ARG);
+                }
             }
         });
     }
@@ -41,16 +43,31 @@ export default class EffectsFormComponenet extends HTMLElement {
     }
     sourceCheck() {
         const CURRENT_CHARACTER = document.querySelector('iwn-character-form').Character;
+        const CURRENT_WEAPON = document.querySelector('iwn-weapon-form').Weapon;
         let source = [];
-        if (CURRENT_CHARACTER.Level >= 2) {
-            const PAS = EFFECTS.find(a => a.name === CURRENT_CHARACTER.Passives[0]);
+        const tmp = ['NormalAttack', 'ElementalSkill', 'ElementalBurst'];
+        tmp.forEach(a => {
+            const PAS = EFFECTS.find(b => b.name === CURRENT_CHARACTER.Talents[a]);
+            if (!PAS)
+                return;
             source.push(PAS);
+        });
+        if (CURRENT_CHARACTER.Level >= 2) {
+            const PAS = EFFECTS.find(a => a.name === CURRENT_CHARACTER.Talents['A1Passive']);
+            if (PAS)
+                source.push(PAS);
         }
         if (CURRENT_CHARACTER.Level >= 8) {
-            const PAS = EFFECTS.find(a => a.name === CURRENT_CHARACTER.Passives[1]);
-            source.push(PAS);
+            const PAS = EFFECTS.find(a => a.name === CURRENT_CHARACTER.Talents['A4Passive']);
+            if (PAS)
+                source.push(PAS);
         }
-        this.effects = this.effects.concat(source);
+        CURRENT_WEAPON.Passive.forEach(a => {
+            const PAS = EFFECTS.find(b => b.name === a);
+            if (PAS)
+                source.push(PAS);
+        });
+        this.effects = DEFAULT_EFFECTS.concat(source);
         return source;
     }
     setValues(obj) {

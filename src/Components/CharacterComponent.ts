@@ -1,8 +1,9 @@
 import { EventDispatcher } from "../Helpers/EventDispatcher.js";
 import { Character } from "../types"
 import CHARACTERS from "../Variables/Characters.js"
+import { IHTMLElement } from '../typeGuard.js';
 
-export default class CharacterFormComponent extends HTMLElement {
+export default class CharacterFormComponent extends HTMLElement implements IHTMLElement{
     private character : Character = CHARACTERS[0];
     private level: number = 0
     private rank : number = 0

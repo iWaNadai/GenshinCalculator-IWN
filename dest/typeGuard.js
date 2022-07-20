@@ -25,3 +25,9 @@ export function isArtifactSet(obj) {
     }
     return true;
 }
+export function isEffect(obj) {
+    if (obj.type === 'Effect') {
+        return true;
+    }
+    return false;
+}

@@ -1,5 +1,3 @@
-import { CHARACTERS } from "./Variables/DataFile";
-
 export type ElementType = 'Anemo' | 'Geo' | 'Electro' | 'Dendro' | 'Hydro' | 'Pyro' | 'Cryo'
 
 export type WeaponType = 'Sword' | 'Bow' | 'Catalyst' | 'Polearm' | 'Claymore'
@@ -86,8 +84,8 @@ export interface Character {
     },
     Rank? : number
     Level? : number
-    Passives : [string,string]
-    Constellations?: (Effect|null)[]
+    Talents : {[key: string] : string}
+    Constellations?: (string)[]
 }
 
 export interface Weapon {
@@ -139,6 +137,7 @@ export interface Weapon {
         }
     }
     Rank? : number
+    Passive : string[]
 }
 
 export interface Artifact {
@@ -186,7 +185,7 @@ export interface ArtifactSet {
         Flower : string;
         Feather : string;
         Sands : string;
-        Goblet : string;
+        Goblet : string;z
         Circlet : string;
     }
     Bonuses : {
@@ -231,11 +230,21 @@ export interface ArtifactSet {
 
 export interface Effect {
     [key: string] : any
+    type : 'Effect'
     name : string;
     id : string
     formRender() : string,
     connect() : any
     disconnect() : any
     output?(...args?) : {[key : string]: any}
+}
+export interface Talent {
+    [key: string] : any
+    type : 'Talent'
+    name : string;
+    id : string;
+    formRender() : string;
+    connect() : any;
+    disconnect() : any;
 
 }
