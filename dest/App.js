@@ -11,8 +11,8 @@ window.customElements.define(`iwn-effect-form`, EffectsComponent);
 window.customElements.define(`iwn-talentboard`, TalentComponent);
 window.customElements.define(`iwn-statboard`, StatsComponent);
 window.addEventListener('gic:Update', e => {
-    console.table([document.querySelector('iwn-character-form').Character,
-        document.querySelector('iwn-weapon-form').Weapon, ...Array.from(document.querySelectorAll('iwn-artifact-form')).map(a => a.Artifact)]);
+    // console.table([(document.querySelector('iwn-character-form') as CharacterFormComponent).Character,
+    // (document.querySelector('iwn-weapon-form') as WeaponFormComponent).Weapon, ...Array.from(document.querySelectorAll('iwn-artifact-form')).map(a => (a as ArtifactFormComponent).Artifact)])
 });
 document.querySelectorAll('button.collapse-toggle').forEach(a => {
     a.onclick = e => {
