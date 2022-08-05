@@ -1,7 +1,10 @@
 import { Character, Weapon, ArtifactSet, Effect} from '../types';
 
-export default <Weapon[]>[
-    {
+const WeaponMap: Map<string, Weapon> = new Map
+
+WeaponMap
+    .set('Cinnabar Spindle', {
+        Interface : 'Weapon',
         Name: 'Cinnabar Spindle',
         Type : 'Sword',
         Image : "/UserInterface/Images/Weapons/CinnabarSpindle.png",
@@ -14,8 +17,9 @@ export default <Weapon[]>[
             }
         },
         Passive : ['Spotless Heart'],
-    },
-    {
+    })
+    .set('Festering Desire', {
+        Interface : 'Weapon',
         Name: 'Festering Desire',
         Type : 'Sword',
         Image : "/UserInterface/Images/Weapons/FesteringDesire.png",
@@ -27,9 +31,10 @@ export default <Weapon[]>[
                 EnergyRecharge : [10, 17.7, 17.7, 25.8, 25.8, 29.8, 29.8, 33.8, 33.8, 37.9, 37.9, 41.9, 41.9, 45.9]
             }
         },
-        Passive : []
-    },
-    {
+        Passive : ['Undying Admiration']
+    })
+    .set('Song of Broken Pines', {
+        Interface : 'Weapon',
         Name: 'Song of Broken Pines',
         Type : 'Claymore',
         Image : "/UserInterface/Images/Weapons/SongOfBrokenPines.png",
@@ -42,8 +47,9 @@ export default <Weapon[]>[
             }
         },
         Passive : []
-    },
-    {
+    })
+    .set('Snow-Tombed Starsilver', {
+        Interface : 'Weapon',
         Name: 'Snow-Tombed Starsilver',
         Type : 'Claymore',
         Image : "/UserInterface/Images/Weapons/Snow-TombedStarsilver.png",
@@ -56,8 +62,9 @@ export default <Weapon[]>[
             }
         },
         Passive : []
-    },
-    {
+    },)
+    .set('Primordial Jade Winged-Spear', {
+        Interface : 'Weapon',
         Name: 'Primordial Jade Winged-Spear',
         Type : 'Polearm',
         Image : "/UserInterface/Images/Weapons/PrimordialJadeWinged-Spear.png",
@@ -70,8 +77,9 @@ export default <Weapon[]>[
             }
         },
         Passive : []
-    },
-    {
+    })
+    .set('Lithic Spear', {
+        Interface : 'Weapon',
         Name : 'Lithic Spear',
         Type : 'Polearm',
         Image : '/UserInterface/Images/Weapons/LithicSpear.png',
@@ -84,5 +92,6 @@ export default <Weapon[]>[
             }
         },
         Passive : []
-    }
-] as Weapon[]
+    })
+
+export default WeaponMap

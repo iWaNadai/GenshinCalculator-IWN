@@ -4,7 +4,7 @@ button {
   background-color: #121212;
   padding: .5rem;
   border: none;
-  width: 8rem;
+  width: Min(8rem, 100%);
   text-align: center;
 }
 
@@ -52,9 +52,10 @@ body {
 nav {
   background-color: #121212;
   padding: 1rem 1.5rem;
-  position: static;
+  position: fixed;
   width: 100%;
   border-bottom: 0.35rem solid #000000;
+  z-index: 30;
 }
 
 nav ul {
@@ -89,7 +90,7 @@ nav ul a:active {
 main {
   padding: 1rem 1.5rem;
   width: Min(47.5rem, 100%);
-  background-color: #121212;
+  background-color: #000000;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -98,6 +99,10 @@ main {
       -ms-flex-direction: column;
           flex-direction: column;
   gap: 1rem;
+}
+
+:disabled {
+  opacity: .5;
 }
 
 section {
@@ -189,8 +194,8 @@ section [data-board="stats"] {
 
 section [data-board="stats"] div {
   -webkit-box-flex: 1;
-      -ms-flex: 1 1 100%;
-          flex: 1 1 100%;
+      -ms-flex: 1 1 30%;
+          flex: 1 1 30%;
   position: relative;
 }
 
@@ -250,9 +255,14 @@ section [data-board="effects"] > div {
       -ms-flex-pack: center;
           justify-content: center;
   gap: 1rem;
+  width: 100%;
 }
 
 section [data-board="effects"] div > div {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 40%;
+          flex: 1 1 40%;
+  min-width: 12rem;
   padding: 1rem 1.5rem;
   position: relative;
   border: 0.3rem solid #121212;
@@ -268,24 +278,17 @@ section [data-board="effects"] div > div {
       -ms-flex-align: center;
           align-items: center;
   gap: .3rem;
-}
-
-section [data-board="effects"] div > div span {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
 }
 
-section [data-board="effects"] div > div span * {
-  -webkit-box-flex: 1;
-      -ms-flex: 1 1 50%;
-          flex: 1 1 50%;
+section [data-board="effects"] div > div span {
+  display: -ms-grid;
+  display: grid;
+  place-items: center;
+  -ms-grid-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
 }
 
 section [data-board="effects"] div > div::before {
@@ -294,18 +297,26 @@ section [data-board="effects"] div > div::before {
   top: -1.5rem;
 }
 
-section [data-board="effects"] div > div p {
+section [data-board="effects"] div > div > ul {
+  list-style: inside;
+}
+
+section [data-board="effects"] div > div > ul li {
   text-align: center;
   word-wrap: break-word;
   max-width: 12rem;
   overflow: hidden;
-  font-size: .85rem;
   word-wrap: break-word;
   margin-bottom: .5rem;
+  font-size: .85rem;
 }
 
-section [data-board="effects"] div > div p var {
+section [data-board="effects"] div > div > ul li var {
   color: #bb86fc;
+}
+
+section [data-board="effects"] div > div hr {
+  width: 100%;
 }
 
 section [data-board="talents"] {
@@ -357,11 +368,15 @@ section [data-board="talents"] div > div::before {
 }
 
 section [data-board="talents"] div > div span#Level {
-  display: inline;
   position: absolute;
   top: -3rem;
   right: 0;
   background: transparent;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
+  place-items: center;
 }
 
 section [data-board="talents"] div > div span#Level label {
@@ -400,8 +415,12 @@ section [data-board="talents"] div > div span p.name {
   padding-left: 1.5rem;
 }
 
-section [data-board="talents"] div > div span p.crit-or-bonus {
+section [data-board="talents"] div > div span p.crit-or-boost {
   color: #bb86fc;
+}
+
+section:first-child {
+  margin-top: 3.5rem;
 }
 
 section.closed {

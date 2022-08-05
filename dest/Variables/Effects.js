@@ -1,260 +1,669 @@
-import { EventDispatcher } from '../Helpers/EventDispatcher.js';
-import { types } from './Characters.js';
-export default [
-    {
-        type: 'Effect',
-        name: 'Character State',
-        id: 'Character-State',
-        formRender() {
-            return `
-                <div id="${this.id}" data-name="${this.name}">
-                    <span>
-                        <label for="isShielded">Shielded</label>
-                        <input type="checkbox" name="isShielded">
-                    </span>
-                    <span>
-                        <label for="currentHP">currentHP</label>
-                        <input type="number" name="currentHP" value="100" step="1" min="1" max="100">
-                    </span>
-                </div>
-            `;
-        },
-        connect() {
-            document.querySelector(`#${this.id} [name="isShielded"]`).onchange = shieldHandler;
-            document.querySelector(`#${this.id} [name="currentHP"]`).onchange = currentHPHanlder;
-            function shieldHandler(e) {
-                EventDispatcher('Effect', { type: 'CharacterState', subType: 'isShielded' });
-            }
-            function currentHPHanlder(e) {
-                EventDispatcher('Effect', { type: 'CharacterState', subType: 'currentHP' });
-            }
-        },
-        disconnect() {
-            document.querySelector(`#${this.id} [name="isShielded"]`).onchange = null;
-            document.querySelector(`#${this.id} [name="currentHP"]`).onchange = null;
-        },
+// import { Character, Weapon, ArtifactSet, Effect} from '../types';
+// // import { EventDispatcher } from '../Helpers/EventDispatcher.js';
+// // import CharacterFormComponent from '../Components/CharacterComponent.js';
+// // import WeaponFormComponent from '../Components/WeaponComponent.js';
+// // import StatBoardComponent from '../Components/StatsComponent.js';
+// // import ArtifactFormComponent from '../Components/ArtifactComponent.js';
+// import { types } from './Characters.js';
+import { AppState } from "../App.js";
+import { getCharacter, getStats, getWeapon, iwnQ, stateChange } from "../Helper.js";
+const EffectsMap = new Map();
+EffectsMap
+    .set('Character State', {
+    type: 'Effect',
+    name: 'Character State',
+    id: 'CharacterState',
+    outputType: 'pre',
+    dependencies: ["characterSelected", "characterLevel", "characterRank",
+        "weaponSelected", "weaponLevel", "weaponRank",
+        "setSelectedFlower", "mainTypeFlower", "mainValueFlower", "subStatsFlower",
+        "setSelectedFeather", "mainTypeFeather", "mainValueFeather", "subStatsFeather",
+        "setSelectedSands", "mainTypeSands", "mainValueSands", "subStatsSands",
+        "setSelectedGoblet", "mainTypeGoblet", "mainValueGoblet", "subStatsGoblet",
+        "setSelectedCirclet", "mainTypeCirclet", "mainValueCirclet", "subStatsCirclet",
+        "effectInput"],
+    formRender() {
+        var _a;
+        const characterState = document.createElement('div');
+        characterState.id = this.id;
+        characterState.dataset.name = this.name;
+        characterState.innerHTML = `
+                        <span id="currentHP">
+                            <label for="currentHP">Current HP%: </label>
+                            <input type="number" name="currentHP" min="0" max="100" value="100">
+                        </span>
+                        <span id="isShielded">
+                            <label for="isShielded">Shielded: </label>
+                            <input type="checkbox" name="isShielded">
+                        </span>
+                        <span id="shieldType">
+                            <label for="shieldType">Shield Type </label>
+                            <select disabled name="shieldType">
+                                ${(() => {
+            const shieldTypes = ['Electro - Crystallize', 'Hydro - Crystallize', 'Pyro - Crystallize', 'Cryo - Crystallize'];
+            return shieldTypes
+                .map(a => `<option value="${a}">${a}</option>`);
+        })()}
+                            </select>
+                        </span>
+                    `;
+        return (_a = iwnQ(`#${this.id}`).index(0)) !== null && _a !== void 0 ? _a : characterState;
     },
-    {
-        type: 'Effect',
-        name: 'Elemental Resonance',
-        id: 'Elemental-Resonance',
-        formRender() {
-            return `
-                <div id="${this.id}" data-name="${this.name}">
-                    <p>
-                        Elemental Resistance <var>+15%</var>, <br> Physical Resistance <var>+15%</var>
-                    </p>
-                    <select id="Selector">
+    connect() {
+        const isShielded = iwnQ(`#${this.id} #isShielded input`);
+        const shieldType = iwnQ(`#${this.id} #shieldType select`);
+        const currentHP = iwnQ(`#${this.id} #currentHP input`);
+        isShielded
+            .on('change', e => {
+            stateChange('effectInput', 'characterState', 'isShielded');
+        });
+        shieldType
+            .on('change', e => {
+            stateChange('effectInput', 'characterState', 'shieldType');
+        });
+        currentHP
+            .on('change', e => {
+            stateChange('effectInput', 'characterState', 'currentHP');
+        });
+    },
+    update(state, preVal, newVal) {
+        if (state === 'effectInput' && preVal === 'characterState' && newVal === 'isShielded') {
+            const shieldType = iwnQ(`#${this.id} #shieldType select`).index(0);
+            const { checked } = iwnQ(`#${this.id} #isShielded input`).index(0);
+            if (checked) {
+                shieldType.disabled = false;
+            }
+            else {
+                shieldType.disabled = true;
+            }
+        }
+    },
+    disconnect() { },
+})
+    .set('Enemy State', {
+    type: 'Effect',
+    name: 'Enemy State',
+    id: 'EnemyState',
+    outputType: 'pre',
+    dependencies: [],
+    formRender() {
+        var _a;
+        const enemyState = document.createElement('div');
+        enemyState.id = this.id;
+        enemyState.dataset.name = this.name;
+        enemyState.innerHTML = `
+                    <span id="currentHP">
+                        <label for="currentHP">current HP%: </label>
+                        <input type="number" name="currentHP" min="0" max="100" value="100">
+                    </span>
+                    <span id="affectedBy">
+                        <label for="affectedBy">affected by: </label>
+                        <select>
+                            ${(() => {
+            return ['None', 'Anemo', 'Geo', 'Electro', 'Dendro', 'Hydro', 'Pyro', 'Cryo']
+                .map(a => `<option value="${a}">${a}</option>`)
+                .join('');
+        })()}
+                        </select>
+                    </span>
+                `;
+        return (_a = iwnQ(`#${this.id}`).index(0)) !== null && _a !== void 0 ? _a : enemyState;
+    },
+    connect() {
+        const currentHP = iwnQ(`#${this.id} #currentHP input`);
+        currentHP
+            .on('change', e => {
+            stateChange('effectInput', 'enemyState', 'currentHP');
+        });
+        const affectedBy = iwnQ(`#${this.id} #affectedBy select`);
+        affectedBy
+            .on('change', e => {
+            stateChange('effectInput', 'enemyStat', 'affectedBy');
+        });
+    },
+    disconnect() { },
+})
+    .set('Elemental Resonance', {
+    type: 'Effect',
+    name: 'Elemental Resonance',
+    id: 'ElementalResonance',
+    outputType: 'pre/post',
+    dependencies: ['characterSelected', 'effectInput'],
+    formRender() {
+        var _a;
+        const ElementalResonance = document.createElement('div');
+        ElementalResonance.id = this.id;
+        ElementalResonance.dataset.name = this.name;
+        ElementalResonance.innerHTML = `
+                    <ul id="EffectsList">
+                        <li>Elemental RES <var>+15%</var> (PC)</li>
+                        <li>Physical RES <var>+15%</var> (PC)</li>
+                    </ul>
+                    <hr>
+                    <select id="ElementalResonance">
                         ${(() => {
-                const EFFECT_NAMES = {
+            const ElemReso = {
+                Anemo: 'Impetuous Winds',
+                Geo: 'Enduring Rock',
+                Electro: 'High Voltage',
+                Dendro: 'INSERT DENDRO RES HERE',
+                Hydro: 'Soothing Water',
+                Pyro: 'Fervent Flames',
+                Cryo: 'Shattering Ice',
+            };
+            const { Element } = getCharacter();
+            const Resonances = ['Protective Canopy', ElemReso[Element]];
+            Object.entries(ElemReso)
+                .forEach(([elem, reso]) => {
+                if (Element === elem)
+                    return;
+                else
+                    Resonances.push(`${ElemReso[Element]} & ${reso}`);
+            });
+            return Resonances.map(a => `<option value="${a}">${a}</option>`).join('');
+        })()}
+                    </select>
+                `;
+        return (_a = iwnQ(`#${this.id}`).index(0)) !== null && _a !== void 0 ? _a : ElementalResonance;
+    },
+    connect() {
+        const ElemReso = iwnQ(`#${this.id} select#ElementalResonance`);
+        ElemReso
+            .on('change', e => {
+            stateChange('effectInput', 'ElementalResonance', ElemReso.index(0).value);
+        });
+    },
+    update(state, preVal, newVal) {
+        if (state === 'characterSelected') {
+            iwnQ(`#${this.id} #ElementalResonance`).index(0)
+                .innerHTML = `
+                        ${(() => {
+                const ElemReso = {
                     Anemo: 'Impetuous Winds',
                     Geo: 'Enduring Rock',
                     Electro: 'High Voltage',
-                    Dendro: 'DENDRO EFFECT NAME HERE',
+                    Dendro: 'INSERT DENDRO RES HERE',
                     Hydro: 'Soothing Water',
                     Pyro: 'Fervent Flames',
-                    Cryo: 'Shattering Ice'
+                    Cryo: 'Shattering Ice',
                 };
-                const OPTIONS = ['Protective Canopy'];
-                const ELEMENT = document.querySelector('iwn-character-form').Character.Element;
-                let temp = '';
-                Object.entries(EFFECT_NAMES).forEach(([k, v]) => {
-                    if (temp === '') {
-                        if (k === ELEMENT) {
-                            temp = v;
-                        }
-                        else {
-                            temp = `${EFFECT_NAMES[ELEMENT]} & ${v}`;
-                        }
-                    }
-                    OPTIONS.push(temp);
-                    temp = '';
+                const { Element } = getCharacter();
+                const Resonances = ['Protective Canopy', ElemReso[Element]];
+                Object.entries(ElemReso)
+                    .forEach(([elem, reso]) => {
+                    if (Element === elem)
+                        return;
+                    else
+                        Resonances.push(`${ElemReso[Element]} & ${reso}`);
                 });
-                return OPTIONS.map(a => `<option value="${a}">${a}</option>`);
-            })().join('')}
-                    </select>
-                </div>
-            `;
-        },
-        connect() {
-            document.querySelector(`#${this.id} #Selector`).onchange = handler;
-            const ID = this.id;
-            function handler(e) {
-                let effect = '';
-                const EFFECT_NAME = document.querySelector(`#${ID} #Selector`).value;
-                if (EFFECT_NAME.includes('Protective Canopy')) {
-                    effect += 'Elemental Resistance <var>+15%</var>,<br>Physical Resistance <var>+15%</var>,<br>';
-                }
-                if (EFFECT_NAME.includes('Impetuous Winds')) {
-                    effect += 'Move Speed <var>+10%</var>,<br>Cooldown Reduction <var>+5%</var>,<br>';
-                }
-                if (EFFECT_NAME.includes('Enduring Rock')) {
-                    effect += 'Shield Strength <var>+15%</var>,<br>Total Damage Bonus <var>+15%</var><br>(When Shielded),<br>';
-                }
-                if (EFFECT_NAME.includes('Soothing Water')) {
-                    effect += 'Incoming Healing <var>+30%</var>,<br>';
-                }
-                if (EFFECT_NAME.includes('Fervent Flames')) {
-                    effect += 'ATK% <var>+25%</var>,<br>';
-                }
-                document.querySelector(`#${ID} p`).innerHTML = effect;
-                EventDispatcher('Effect', { type: 'ElementalResonance', subType: 'NA' });
-            }
-        },
-        disconnect() {
-            document.querySelector(`#${this.id} #Selector`).onchange = null;
-        },
-        output() {
-            const state = {};
-            const ID = this.id;
-            const EFFECT_NAME = document.querySelector(`#${ID} #Selector`).value;
-            if (EFFECT_NAME.includes('Protective Canopy')) {
-                protectiveCanopy(state);
-            }
-            if (EFFECT_NAME.includes('Impetuous Winds')) {
-                impetuousWinds(state);
-            }
-            if (EFFECT_NAME.includes('Enduring Rock')) {
-                enduringRock(state);
-            }
-            if (EFFECT_NAME.includes('Soothing Water')) {
-                soothingWater(state);
-            }
-            if (EFFECT_NAME.includes('Fervent Flames')) {
-                ferventFlames(state);
-            }
-            if (EFFECT_NAME.includes('Shattering Ice')) {
-                shatteringIce(state);
-            }
-            function protectiveCanopy(obj) {
-                obj.AnemoResistance = 15;
-                obj.GeoResistance = 15;
-                obj.ElectroResistance = 15;
-                obj.DendroResistance = 15;
-                obj.HydroResistance = 15;
-                obj.PyroResistance = 15;
-                obj.CryoResistance = 15;
-                obj.PhysicalResistance = 15;
-            }
-            function impetuousWinds(obj) {
-                obj.CooldownReduction = 5;
-                obj.MoveSpeed = 10;
-            }
-            function enduringRock(obj) {
-                obj.ShieldStrength = 15;
-                if (document.querySelector('#Character-State [name="isShielded"]').checked) {
-                    obj.TotalDamage = 15;
-                }
-            }
-            function soothingWater(obj) {
-                obj.IncomingHealingBonus = 30;
-            }
-            function ferventFlames(obj) {
-                obj['ATK%'] = 25;
-            }
-            function shatteringIce(obj) {
-                console.log('add this next time');
-            }
-            return state;
+                return Resonances.map(a => `<option value="${a}">${a}</option>`).join('');
+            })()}
+                    `;
         }
+        const totalEffects = [];
+        const { value } = iwnQ(`#${this.id} #ElementalResonance`).index(0);
+        if (value === 'Protective Canopy') {
+            totalEffects.push('Elemental RES <var>+15%</var> (PC)');
+            totalEffects.push('Physical RES <var>+15%</var> (PC)');
+        }
+        if (value.includes('Impetuous Winds')) {
+            totalEffects.push('Cooldown Reduction <var>+5%</var> (IW)');
+            totalEffects.push('Move Speed <var>+10%</var> (IW)');
+            totalEffects.push('Stamina Consumption <var>-15%</var> (IW)');
+        }
+        if (value.includes('Enduring Rock')) {
+            const { checked } = iwnQ('#CharacterState #isShielded input').index(0);
+            totalEffects.push('Shield Strength <var>+15%</var>');
+            if (checked) {
+                totalEffects.push('Total DMG <var>+10%</var><br>(When shielded');
+            }
+            else {
+                totalEffects.push('Total DMG <var>+0%</var><br>(When shielded');
+            }
+        }
+        if (value.includes('High Voltage')) {
+            totalEffects.push('Generates <var>1</var> Electro particle<br>for every Electro Reaction');
+        }
+        if (value.includes('Soothing Water')) {
+            totalEffects.push('Incoming Healing Bonus <var>+30%</var>');
+        }
+        if (value.includes('Fervent Flames')) {
+            totalEffects.push('ATK <var>+25%</var>');
+        }
+        if (value.includes('Shattering Ice')) {
+            const condition = iwnQ(`#EnemyState #affectedBy select`).index(0).value;
+            if (condition === 'Cryo') {
+                totalEffects.push('Critical Rate <var>+15%</var> (When enemy affected by Cryo');
+            }
+            else {
+                totalEffects.push('Critical Rate <var>+0%</var> (When enemy affected by Cryo');
+            }
+        }
+        iwnQ(`#${this.id} ul#EffectsList`)
+            .index(0)
+            .innerHTML = totalEffects.map(a => `<li>${a}</li>`).join('');
     },
-    {
-        type: 'Effect',
-        name: 'Calcite Might',
-        id: 'Calcite-Might',
-        formRender() {
-            return `
-                <div id="${this.id}" data-name="${this.name}">
-                    <p>
-                        Transient Blossom Damage\n <var>+25%</var><br>(when enemy is < 50% HP)
-                    </p>
-                </div>
-            `;
-        },
-        connect() {
-        },
-        disconnect() {
-        },
-        output() {
-            const state = {};
-            const CONDITION = parseFloat(document.querySelector(`#Enemy-State [name="currentHP"]`) ? document.querySelector(`#Enemy-State [name="currentHP"]`).value : '100');
-            if (true) {
-                state['TransientBlossomDamage'] = 25;
-                console.log(state);
+    disconnect() { },
+    output(getCode) {
+        const ElemResoOutput = {};
+        const { value } = iwnQ(`#${this.id} #ElementalResonance`).index(0);
+        if (getCode === 'pre') {
+            if (value.includes('Impetuous Winds')) {
+                ElemResoOutput.StaminaEfficiency = 15;
+                ElemResoOutput.MoveSpeed = 10;
+                ElemResoOutput.CooldownReduction = 5;
             }
-            return state;
-        }
-    },
-    {
-        type: 'Effect',
-        name: 'Homuncular Nature',
-        id: 'Homuncular-Nature',
-        formRender() {
-            return `
-                <div id="${this.id}" data-name="${this.name}">
-                    <p>
-                        Elemental Mastery <var>+125</var><br>(After using Burst)
-                    </p>
-                    <span>
-                        <label for="usedBurst">Used Burst</label>
-                        <input type="checkbox" name="usedBurst">
-                    </span>
-                </div>
-            `;
-        },
-        connect() {
-            document.querySelector(`#${this.id} [name="usedBurst"]`).onchange = handler;
-            function handler() {
-                EventDispatcher('Effect', { type: 'Homuncular Nature', subType: 'usedBurst' });
+            if (value.includes('Enduring Rock')) {
+                ElemResoOutput.ShieldStrength = 15;
             }
-        },
-        disconnect() {
-            document.querySelector(`#${this.id} [name="usedBurst"]`).onchange = null;
-        },
-        output() {
-            let state = {};
-            const CONDITION = document.querySelector(`#${this.id} [name="usedBurst"]`).checked;
-            if (CONDITION) {
-                state.ElementalMastery = 125;
+            if (value.includes('Soothing Water')) {
+                ElemResoOutput.IncomingHealingBonus = 30;
             }
-            return state;
-        }
-    },
-    {
-        type: 'Effect',
-        name: 'Spotless Heart',
-        id: 'Spotless-Heart',
-        formRender() {
-            return `
-                <div id="${this.id}" data-name="${this.name}">
-                    <p>
-                        Elemental Skill DMG \n<var>+40% DEF</var>
-                    </p>
-                </div>
-            `;
-        },
-        connect() {
-            window.addEventListener('gic:Update', e => {
-                const CHANGED = e.detail.changed;
-                if (CHANGED === 'Stats') {
-                    const REF_RANK = document.querySelector('iwn-weapon-form').Weapon.Rank;
-                    const DEF = document.querySelector('iwn-statboard').Final[types.DEF];
-                    const VAR = document.querySelector(`#${this.id} p var`);
-                    const SCALING = [.4, .5, .6, .7, .8][REF_RANK];
-                    VAR.innerHTML = `+${(SCALING * DEF).toFixed(2)}`;
+            if (value.includes('Fervent Flames')) {
+                ElemResoOutput['ATK%'] = 25;
+            }
+            if (value.includes('Shattering Ice')) {
+                const condtion = iwnQ('#EnemyState #affectedBy select').index(0).value;
+                if (condtion === 'Cryo') {
+                    ElemResoOutput.CriticalRate = 15;
                 }
-            });
-        },
-        disconnect() {
-        },
-        output() {
-            let state = {};
-            const REF_RANK = document.querySelector('iwn-weapon-form').Weapon.Rank;
-            const DEF = document.querySelector('iwn-statboard').Final[types.DEF];
-            const VAR = document.querySelector(`#${this.id} p var`);
-            const SCALING = [.4, .5, .6, .7, .8][REF_RANK];
-            state.ElementalSkillBoost = parseFloat((SCALING * DEF).toFixed(2));
-            return state;
+            }
+            if (value === 'Protective Canopy') {
+                ElemResoOutput.AnemoResistance = 15;
+                ElemResoOutput.GeoResistance = 15;
+                ElemResoOutput.ElectroResistance = 15;
+                ElemResoOutput.DendroResistance = 15;
+                ElemResoOutput.HydroResistance = 15;
+                ElemResoOutput.PyroResistance = 15;
+                ElemResoOutput.CryoResistance = 15;
+                ElemResoOutput.PhysicalResistance = 15;
+            }
         }
+        else if (getCode === 'post') {
+            if (value.includes('Enduring Rock')) {
+                const condtion = iwnQ('#CharacterState #isShielded input').index(0).checked;
+                if (condtion) {
+                    ElemResoOutput.TotalDamageBonus = 10;
+                }
+            }
+        }
+        return ElemResoOutput;
     }
-];
+})
+    //ALBEDO
+    .set('Calcite Might', {
+    type: 'Effect',
+    name: 'Calcite Might',
+    id: 'CalciteMight',
+    outputType: 'post',
+    dependencies: ['effectInput'],
+    formRender() {
+        var _a;
+        const calciteMight = document.createElement('div');
+        calciteMight.id = this.id;
+        calciteMight.dataset.name = this.name;
+        calciteMight.innerHTML = `
+                    <ul id="EffectsList">
+                        <li class="TransientBlossomDMG">
+                            Transient Blossome DMG <var>+${(() => {
+            const currentHP = parseFloat(iwnQ(`#EnemyState #currentHP input`).index(0).value);
+            if (currentHP < 50) {
+                return 25;
+            }
+            return 0;
+        })()}%</var><br>(on enemies with less than 50% HP)
+                        </li>
+                    </ul>
+                `;
+        return (_a = iwnQ(`#${this.id}`).index(0)) !== null && _a !== void 0 ? _a : calciteMight;
+    },
+    connect() { },
+    update(state, preVal, newVal) {
+        if (state === 'effectInput' && preVal === 'enemyState' && newVal === 'currentHP') {
+            const currentHP = parseFloat(iwnQ(`#EnemyState #currentHP input`).index(0).value);
+            let bonus = 0;
+            if (currentHP < 50) {
+                bonus = 25;
+            }
+            iwnQ(`#${this.id} #EffectsList .TransientBlossomDMG var`).index(0)
+                .innerHTML = `+${bonus}%`;
+        }
+    },
+    disconnect() {
+        console.log(iwnQ(`#${this.id}`).index(0));
+        if (iwnQ(`#${this.id}`).index(0)) {
+            iwnQ(`#${this.id}`).index(0).remove();
+        }
+    },
+    output(getCode) {
+        const statOutput = {};
+        if (getCode === 'post') {
+            const currentHP = parseFloat(iwnQ(`#EnemyState #currentHP input`).index(0).value);
+            if (currentHP < 50) {
+                statOutput.TransientBlossomDamageBonus = 25;
+            }
+        }
+        return statOutput;
+    }
+})
+    .set('Homuncular Nature', {
+    type: 'Effect',
+    name: 'Homuncular Nature',
+    id: 'HomuncularNature',
+    outputType: 'pre',
+    dependencies: ['effectInput'],
+    formRender() {
+        var _a;
+        const homuncularNature = document.createElement('div');
+        homuncularNature.id = this.id;
+        homuncularNature.dataset.name = this.name;
+        homuncularNature.innerHTML = `
+                    <ul id="EffectsList">
+                        <li class="ElementalMasteryBonus">
+                            Elemental Mastery <var>+0</var><br>(after using burst)
+                        </li>
+                    </ul>
+                    <hr>
+                    <span id="usedBurst">
+                        <label>used burst:</label>
+                        <input type="checkbox">
+                    </span>
+                `;
+        return (_a = iwnQ(`#${this.id}`).index(0)) !== null && _a !== void 0 ? _a : homuncularNature;
+    },
+    connect() {
+        const usedBurst = iwnQ(`#${this.id} #usedBurst input`);
+        usedBurst
+            .on('change', e => {
+            stateChange('effectInput', 'homuncularNature', 'usedBurst');
+        });
+    },
+    update(state, preVal, newVal) {
+        if (state === 'effectInput' && preVal === 'homuncularNature' && newVal === 'usedBurst') {
+            const usedBurst = iwnQ(`#${this.id} #usedBurst input`).index(0);
+            const ElementalMasteryVar = iwnQ(`#${this.id} #EffectsList .ElementalMasteryBonus var`).index(0);
+            let elementalMasteryBonus = 0;
+            if (usedBurst.checked) {
+                elementalMasteryBonus = 125;
+            }
+            ElementalMasteryVar.innerHTML = `+${elementalMasteryBonus}`;
+        }
+    },
+    disconnect() {
+        if (iwnQ(`#${this.id}`).index(0)) {
+            iwnQ(`#${this.id}`).index(0).remove();
+        }
+    },
+    output(getCode) {
+        const statOutput = {};
+        if (getCode === 'pre') {
+            const usedBurst = iwnQ(`#${this.id} #usedBurst input`).index(0);
+            if (usedBurst.checked) {
+                statOutput.ElementalMastery = 125;
+            }
+        }
+        return statOutput;
+    }
+})
+    .set('Flower of Eden', {
+    type: 'Effect',
+    name: 'Flower of Eden',
+    id: 'FlowerOfEden',
+    outputType: 'pre',
+    dependencies: [],
+    formRender() {
+        var _a;
+        const flowerOfEden = document.createElement('div');
+        flowerOfEden.id = this.id;
+        flowerOfEden.dataset.name = this.name;
+        flowerOfEden.innerHTML = `
+                    <ul id="EffectsList">
+                        <li class="EnergyBonus">
+                            Transient Blossoms grant <var>1.2</var> energy particles
+                        </li>
+                    </ul>
+                `;
+        return (_a = iwnQ(`#${this.id}`).index(0)) !== null && _a !== void 0 ? _a : flowerOfEden;
+    },
+    connect() { },
+    disconnect() {
+        if (iwnQ(`#${this.id}`).index(0)) {
+            iwnQ(`#${this.id}`).index(0).remove();
+        }
+    },
+})
+    .set('Opening of Phanerozoic', {
+    type: 'Effect',
+    name: 'Opening of Phanerozoic',
+    id: 'OpeningOfPhanerozoic',
+    outputType: 'post',
+    dependencies: [],
+    formRender() {
+        var _a;
+        const openingOfPhanerozoic = document.createElement('div');
+        openingOfPhanerozoic.id = this.id;
+        openingOfPhanerozoic.dataset.name = this.name;
+        openingOfPhanerozoic
+            .innerHTML = `
+                            <ul id="EffectsList">
+                                <li>Rite of Progeniture DMG Bonus <var>+0%</var> (30% DEF Bonus per FR stack)</li>
+                                <li>Fatal Blossom DMG Bonus <var>+0%</var> (30% DEF Bonus per FR stack)</li>
+                            </ul>
+                            <hr>
+                            <span id="FatalReckoningStacks">
+                                <label for="stacks">FR Stacks: </label>
+                                <input type="number" name="stacks" min="0" max="4" value="0">
+                            </span>
+                        `;
+        return (_a = iwnQ(`#${this.id}`).index(0)) !== null && _a !== void 0 ? _a : openingOfPhanerozoic;
+    },
+    connect() {
+        const fatalReckoningStacks = iwnQ(`#${this.id} #FatalReckoningStacks input`);
+        fatalReckoningStacks
+            .on('change', e => {
+            const effects = iwnQ(`#${this.id} #EffectsList li var`).array();
+            const stacks = parseFloat(fatalReckoningStacks.index(0).value);
+            effects[0].innerHTML = `+${(30 * stacks)}%`;
+            effects[1].innerHTML = `+${(30 * stacks)}%`;
+        });
+    },
+    disconnect() {
+        if (iwnQ(`#${this.id}`).index(0)) {
+            iwnQ(`#${this.id}`).index(0).remove();
+        }
+    },
+    output(getCode) {
+        const OpeningcfPhanerozoicOutput = {};
+        const FatalReckoning = parseFloat(iwnQ(`#${this.id} #FatalReckoningStacks input`).index(0).value);
+        const { DEF } = getStats();
+        if (getCode === 'post') {
+            OpeningcfPhanerozoicOutput.RiteOfProgenitureDamageBoost = (FatalReckoning * .3) * DEF;
+            OpeningcfPhanerozoicOutput.FatalBlossomDamageBoost = (FatalReckoning * .3) * DEF;
+        }
+        return OpeningcfPhanerozoicOutput;
+    }
+})
+    .set('Descent of Divinity', {
+    type: 'Effect',
+    name: 'Descent of Divinity',
+    id: 'DescentofDivinity',
+    outputType: 'post',
+    dependencies: [],
+    formRender() {
+        var _a;
+        const descentOfDivinity = document.createElement('div');
+        descentOfDivinity.id = this.id;
+        descentOfDivinity.dataset.name = this.name;
+        descentOfDivinity
+            .innerHTML = `
+                            <ul id="EffectsList">
+                                <li>Plunging Attack DMG Bonus <var>+0%</var> (When inside Solar Isotoma's Field)</li>
+                            </ul>
+                            <hr>
+                            <span id="inSolarIsotomaField">
+                                <label for="inSolarIsotomaField">In S.I. field:</label>
+                                <input type="checkbox" name="inSolarIsotomaField">
+                            </span>
+                        `;
+        return (_a = iwnQ(`#${this.id}`).index(0)) !== null && _a !== void 0 ? _a : descentOfDivinity;
+    },
+    connect() {
+        const inField = iwnQ(`#${this.id} #inSolarIsotomaField input`);
+        inField
+            .on('change', e => {
+            const { checked } = inField.index(0);
+            const descentOfDivinityVar = iwnQ(`#${this.id} #EffectsList li var`).index(0);
+            let plungeDMG;
+            if (checked)
+                plungeDMG = 30;
+            else
+                plungeDMG = 0;
+            descentOfDivinityVar.innerHTML = `+${plungeDMG}%`;
+        });
+    },
+    disconnect() {
+        if (iwnQ(`#${this.id}`).index(0)) {
+            iwnQ(`#${this.id}`).index(0).remove();
+        }
+    },
+    output(getCode) {
+        const state = {};
+        if (getCode === 'post') {
+            const { checked } = iwnQ(`#${this.id} #inSolarIsotomaField input`).index(0);
+            if (checked) {
+                state.plungeDamageBonus = 30;
+            }
+        }
+        return state;
+    }
+})
+    .set('Dust of Purification', {
+    type: 'Effect',
+    name: 'Dust of Purification',
+    id: 'DustofPurification',
+    outputType: 'post',
+    dependencies: ['effectInput'],
+    formRender() {
+        var _a;
+        const dustOfPurification = document.createElement('div');
+        dustOfPurification.id = this.id;
+        dustOfPurification.dataset.name = this.name;
+        dustOfPurification
+            .innerHTML = `
+                        <ul id="EffectsList">
+                            <li>Total DMG <var>+0%</var> (When shielded by crystallize shield)</li>
+                        </ul>
+                    `;
+        return (_a = iwnQ(`#${this.id}`).index(0)) !== null && _a !== void 0 ? _a : dustOfPurification;
+    },
+    connect() {
+    },
+    update(state, preVal, newVal) {
+        if (state === 'effectInput' && preVal === 'characterState' && newVal === 'isShielded' || state === 'effectInput' && preVal === 'characterState' && newVal === 'shieldType') {
+            const { checked } = iwnQ(`#CharacterState #isShielded input`).index(0);
+            const { value } = iwnQ(`#CharacterState #shieldType select`).index(0);
+            const listElement = iwnQ(`#${this.id} li var`).index(0);
+            let Output = 0;
+            if (checked) {
+                if (value.includes('Crystallize')) {
+                    Output = 17;
+                }
+            }
+            listElement.innerHTML = `+${Output}%`;
+        }
+    },
+    disconnect() {
+        if (iwnQ(`#${this.id}`).index(0)) {
+            iwnQ(`#${this.id}`).index(0).remove();
+        }
+    },
+    output(getCode) {
+        const state = {};
+        if (getCode === 'post') {
+            const { checked } = iwnQ(`#CharacterState #isShielded input`).index(0);
+            const { value } = iwnQ(`#CharacterState #shieldType select`).index(0);
+            if (checked) {
+                if (value.includes('Crystallize')) {
+                    state.TotalDamageBonus = 17;
+                }
+            }
+        }
+        return state;
+    }
+})
+    //JEAN
+    //CINNABAR SPINDLE
+    .set('Spotless Heart', {
+    type: 'Effect',
+    name: 'Spotless Heart',
+    id: 'SpotlessHeart',
+    outputType: 'post',
+    dependencies: ["weaponRank"],
+    formRender() {
+        var _a;
+        const spotlessHeart = document.createElement('div');
+        spotlessHeart.id = this.id;
+        spotlessHeart.dataset.name = this.name;
+        spotlessHeart.innerHTML = `
+                    <ul id="EffectsList">
+                        <li class="ElementalSkillBoost">
+                            Elemental Skill DMG <var>+${(() => {
+            const rank = AppState.weaponForm.rank;
+            const scaling = [40, 50, 60, 70, 80][rank];
+            return scaling;
+        })()}%</var>
+                        </li>
+                    </ul>
+                `;
+        return (_a = iwnQ(`#${this.id}`).index(0)) !== null && _a !== void 0 ? _a : spotlessHeart;
+    },
+    connect() { },
+    update(state, preVal, newVal) {
+        if (state === 'weaponRank') {
+            const rank = AppState.weaponForm.rank;
+            const ElementalSkillBoostVar = iwnQ(`#${this.id} #EffectsList .ElementalSkillBoost var`).index(0);
+            ElementalSkillBoostVar.innerHTML = `+${[40, 50, 60, 70, 80][rank]}%`;
+        }
+    },
+    disconnect() {
+        if (iwnQ(`#${this.id}`).index(0)) {
+            iwnQ(`#${this.id}`).index(0).remove();
+        }
+    },
+    output(getCode) {
+        var _a;
+        const SpotlessHeartOutput = {};
+        if (getCode === 'post') {
+            const Scaling = [.4, .5, .6, .7, .8][(_a = getWeapon()) === null || _a === void 0 ? void 0 : _a.Rank];
+            const { DEF } = getStats();
+            SpotlessHeartOutput.ElementalSkillDamageBoost = Scaling * DEF;
+        }
+        return SpotlessHeartOutput;
+    }
+})
+    //FESTERING DESIRE
+    .set('Undying Admiration', {
+    type: 'Effect',
+    name: 'Undying Admiration',
+    id: 'UndyingAdmiration',
+    outputType: 'post',
+    dependencies: [],
+    formRender() {
+        var _a;
+        const undyingAdmiration = document.createElement('div');
+        undyingAdmiration.id = this.id;
+        undyingAdmiration.dataset.name = this.name;
+        undyingAdmiration.innerHTML = `
+                    flower of eden
+                `;
+        return (_a = iwnQ(`#${this.id}`).index(0)) !== null && _a !== void 0 ? _a : undyingAdmiration;
+    },
+    connect() { },
+    disconnect() {
+        console.log(iwnQ(`#${this.id}`).index(0));
+        if (iwnQ(`#${this.id}`).index(0)) {
+            iwnQ(`#${this.id}`).index(0).remove();
+        }
+    },
+});
+export default EffectsMap;

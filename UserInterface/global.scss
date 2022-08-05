@@ -63,7 +63,7 @@ $FONT : #ffffff;
         gap : 1rem;
         
         div {
-            flex: 1 1 100%;
+            flex: 1 1 30%;
             position: relative;
 
             &::before {
@@ -111,9 +111,12 @@ $FONT : #ffffff;
             flex-wrap: wrap;
             justify-content: center;
             gap : 1rem;
+            width: 100%;
         }
 
         div > div{
+            flex: 1 1 40%;
+            min-width: 12rem;
             padding:  1rem 1.5rem;
             position: relative;
             border: .3rem solid $MAIN-COLOR-0;
@@ -122,14 +125,12 @@ $FONT : #ffffff;
             flex-direction: column;
             align-items: center;
             gap: .3rem;
+            justify-content: center;
 
             span {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                * {
-                    flex: 1 1 50%;
-                }
+                display: grid;
+                place-items: center;
+                grid-template-columns: 1fr 1fr;
             }
 
             &::before {
@@ -138,18 +139,39 @@ $FONT : #ffffff;
                 top: -1.5rem;
             }
 
-            p {
-                text-align: center;
-                word-wrap: break-word;
-                max-width: 12rem;
-                overflow: hidden;
-                font-size: .85rem;
-                word-wrap: break-word;
-                margin-bottom: .5rem;
+            // & > p {
+            //     text-align: center;
+            //     word-wrap: break-word;
+            //     max-width: 12rem;
+            //     overflow: hidden;
+            //     font-size: .85rem;
+            //     word-wrap: break-word;
+            //     margin-bottom: .5rem;
 
-                var {
-                    color: $ACCENT-COLOR-0;
+            //     var {
+            //         color: $ACCENT-COLOR-0;
+            //     }
+            // }
+
+            & > ul {
+                list-style:inside;
+
+                li {
+                    text-align: center;
+                    word-wrap: break-word;
+                    max-width: 12rem;
+                    overflow: hidden;
+                    word-wrap: break-word;
+                    margin-bottom: .5rem;
+                    font-size: .85rem;
+                    var {
+                        color: $ACCENT-COLOR-0;
+                    }
                 }
+            }
+
+            hr {
+               width: 100%;
             }
         }
     }
@@ -186,11 +208,13 @@ $FONT : #ffffff;
             }
 
             span#Level {
-                display: inline;
                 position: absolute;
                 top : -3rem;
                 right : 0;
                 background: transparent;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                place-items: center;
 
                 label {
                     color : $MAIN-COLOR-1
@@ -217,7 +241,7 @@ $FONT : #ffffff;
                     padding-left: 1.5rem;
                 }
 
-                p.crit-or-bonus {
+                p.crit-or-boost {
                     color : $ACCENT-COLOR-0
                 }
 
@@ -232,7 +256,7 @@ button {
     background-color: $MAIN-COLOR-0;
     padding: .5rem;
     border: none;;
-    width: 8rem;
+    width: Min(8rem, 100%);
     text-align: center;
 }
 
@@ -272,9 +296,10 @@ body {
 nav {
     background-color: $MAIN-COLOR-0;
     padding: 1rem 1.5rem;
-    position: static;
+    position: fixed;
     width: 100%;
     border-bottom: .35rem solid $MAIN-COLOR-1;
+    z-index: 30;
 
     ul {
         display: flex;
@@ -299,14 +324,22 @@ nav {
 main {
     padding: 1rem 1.5rem;
     width: Min(47.5rem, 100%);
-    background-color: $MAIN-COLOR-0;
+    background-color: $MAIN-COLOR-1;
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
+:disabled {
+    opacity: .5;
+}
+
 section {
     @include WINDOW();
+
+    &:first-child {
+        margin-top: 3.5rem;
+    }
 
     &.closed {
         min-height: 0;

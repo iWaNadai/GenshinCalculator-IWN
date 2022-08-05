@@ -1,44 +1,42 @@
 import { Character, Weapon, ArtifactSet, Effect} from '../types';
-import CharacterFormComponent from '../Components/CharacterComponent.js';
-import EFFECTS from './Effects.js'
 
 export const types : {[key:string]:number} = {
     HP : 0,
     ATK : 1,
     DEF : 2,
     ElementalMastery : 3,
-    EnergyRecharge : 4,
-    CriticalRate : 5,
-    CriticalDamage : 6,
-    HealingBonus : 7,
-    ShieldStrength : 8,
-    AnemoDamage : 9,
-    AnemoResistance : 10,
-    GeoDamage : 11,
-    GeoResistance : 12,
-    ElectroDamage : 13,
-    ElectroResistance : 14,
-    DendroDamage : 15,
-    DendroResistance : 16,
-    HydroDamage : 17,
-    HydroResistance : 18,
-    PyroDamage : 19,
-    PyroResistance : 20,
-    CryoDamage : 21,
-    CryoResistance : 22,
-    PhysicalDamage : 23,
-    PhysicalResistance : 24,
-    MoveSpeed : 25,
-    AttackSpeed : 26,
-    NormalAttackDamage : 27,
-    ChargedAttackDamage : 28,
-    PlungeDamage : 29,
-    ElementalSkillDamage : 30,
-    ElementalBurstDamage : 31,
+    MoveSpeed : 4,
+    StaminaEfficiency : 5,
+    AttackSpeed : 6,
+    CooldownReduction : 7,
+    EnergyRecharge : 8,
+    CriticalRate : 9,
+    CriticalDamage : 10,
+    HealingBonus : 11,
+    ShieldStrength : 12,
+    AnemoDamageBonus : 13,
+    AnemoResistance : 14,
+    GeoDamageBonus : 15,
+    GeoResistance : 16,
+    ElectroDamageBonus : 17,
+    ElectroResistance : 18,
+    DendroDamageBonus : 19,
+    DendroResistance : 10,
+    HydroDamageBonus : 21,
+    HydroResistance : 22,
+    PyroDamageBonus : 23,
+    PyroResistance : 24,
+    CryoDamageBonus : 25,
+    CryoResistance : 26,
+    PhysicalDamageBonus : 27,
+    PhysicalResistance : 28,
     }
 
-export default <Character[]>[
-    {
+const CharacterMap : Map<string, Character> = new Map;
+
+CharacterMap
+    .set('Albedo', {
+        Interface : 'Character',
         Name : 'Albedo',
         Type : 'Sword',
         Element : 'Geo',
@@ -53,22 +51,26 @@ export default <Character[]>[
                 CriticalDamage : [50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50],
                 MoveSpeed : [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100],
                 AttackSpeed : [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100],
+                Cooldown : [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100],
 
             },
             Bonus : {
-                GeoDamage: [0, 0, 0, 0, 7.2, 7.2, 14.4, 14.4, 14.4, 14.4, 21.6, 21.6, 28.8, 28.8],
+                GeoDamageBonus: [0, 0, 0, 0, 7.2, 7.2, 14.4, 14.4, 14.4, 14.4, 21.6, 21.6, 28.8, 28.8],
             }
         },
         Talents : {
             NormalAttack : 'Favonious Bladework - Weiss',
-            ElementalSkill : 'Abiogenesis: Solar Istoma',
+            ElementalSkill : 'Abiogenesis: Solar Isotoma',
             ElementalBurst : 'Rite of Progeniture: Tectonic Tide',
             A1Passive : 'Calcite Might',
-            A4Passive : 'Homuncular Nature'
+            A4Passive : 'Homuncular Nature',
+            UPassive : ''
         },
+        Constellations : ['', 'Flower of Eden', 'Opening of Phanerozoic', '', 'Descent of Divinity', '', 'Dust of Purification']
 
-    },
-    {
+    })
+    .set('Jean', {
+        Interface : 'Character',
         Name : 'Jean',
         Type : 'Sword',
         Element : 'Anemo',
@@ -83,20 +85,24 @@ export default <Character[]>[
                 CriticalDamage : [50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50],            
                 MoveSpeed : [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100],
                 AttackSpeed : [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100],
+                Cooldown : [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100],
             },
             Bonus : {
                 HealingBonus : [0, 0, 0, 0, 5.5, 5.5, 11.1, 11.1, 11.1, 11.1, 16.6, 16.6, 22.2, 22.2]
             }
         },
         Talents : {
-            NormalAttack : '',
+            NormalAttack : 'Favonious Bladework',
             ElementalSkill : '',
             ElementalBurst : '',
             A1Passive : 'Wind Companion',
             A4Passive : 'Let the Wind Lead'
         },
-    },
-    {
+        Constellations : ['', '','','','','','']
+
+    })
+    .set('Bennett', {
+        Interface : 'Character',
         Name : 'Bennett',
         Type : 'Sword',
         Element : 'Pyro',
@@ -111,6 +117,7 @@ export default <Character[]>[
                 CriticalDamage : [50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50],
                 MoveSpeed : [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100],
                 AttackSpeed : [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100],
+                Cooldown : [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100],
             },
             Bonus : {
                 EnergyRecharge: [0, 0, 0, 0, 6.7, 6.7, 13.3, 13.3, 13.3, 13.3, 20, 20, 26.7, 26.7]
@@ -120,12 +127,14 @@ export default <Character[]>[
             NormalAttack : '',
             ElementalSkill : '',
             ElementalBurst : '',
-            A1Passive : EFFECTS[0].name,
-            A4Passive : EFFECTS[0].name
+            A1Passive : '',
+            A4Passive : ''
         },
+        Constellations : ['', '','','','','','']
 
-    },
-    {
+    })
+    .set('Eula', {
+        Interface : 'Character',
         Name : 'Eula',
         Type : 'Claymore',
         Element : 'Cryo',
@@ -140,6 +149,7 @@ export default <Character[]>[
                 CriticalDamage : [50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50],
                 MoveSpeed : [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100],
                 AttackSpeed : [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100],
+                Cooldown : [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100],
 
             },
             Bonus : {
@@ -150,11 +160,14 @@ export default <Character[]>[
             NormalAttack : '',
             ElementalSkill : '',
             ElementalBurst : '',
-            A1Passive : EFFECTS[0].name,
-            A4Passive : EFFECTS[0].name
+            A1Passive : '',
+            A4Passive : ''
         },
-    },
-    {
+        Constellations : ['', '','','','','','']
+
+    })
+    .set('Xiao', {
+        Interface : 'Character',
         Name : 'Xiao',
         Type : 'Polearm',
         Element : 'Anemo',
@@ -169,6 +182,7 @@ export default <Character[]>[
                 CriticalDamage : [50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50],
                 MoveSpeed : [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100],
                 AttackSpeed : [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100],
+                Cooldown : [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100],
 
             },
             Bonus : {
@@ -179,8 +193,11 @@ export default <Character[]>[
             NormalAttack : '',
             ElementalSkill : '',
             ElementalBurst : '',
-            A1Passive : EFFECTS[0].name,
-            A4Passive : EFFECTS[0].name
+            A1Passive : '',
+            A4Passive : ''
         },
-    },
-]
+        Constellations : ['', '','','','','','']
+
+    })
+
+export default CharacterMap
